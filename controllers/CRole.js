@@ -1,5 +1,5 @@
-const mRole = require('../models/MRole');
-const resp = require('../utils/responses');
+const mRole = require('../models/MRole')
+const resp = require('../utils/responses')
 
 async function createRole(req, res) {
   try {
@@ -11,7 +11,7 @@ async function createRole(req, res) {
     })
 
     const saveRole = await role.save()
-    resp.makeResponsesOk(res, saveRole, "RCreated")
+    resp.makeResponsesOkData(res, saveRole, "RCreated")
   } catch (error) {
     resp.makeResponsesError(res, error)
   }
@@ -20,7 +20,7 @@ async function createRole(req, res) {
 async function getAllRoles(req, res) {
   try {
     const roles = await mRole.find()
-    resp.makeResponsesOk(res, roles, "Success")
+    resp.makeResponsesOkData(res, roles, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
   }
@@ -30,7 +30,7 @@ async function getRoleById(req, res) {
   try {
     const id = req.params.id
     const role = await mRole.findById(id)
-    resp.makeResponsesOk(res, role, "Success")
+    resp.makeResponsesOkData(res, role, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
   }
@@ -41,7 +41,7 @@ async function updateRole(req, res) {
     const id = req.params.id
     const value = req.body
     const role = await mRole.findByIdAndUpdate(id, value)
-    resp.makeResponsesOk(res, role, "Success")
+    resp.makeResponsesOkData(res, role, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
   }
@@ -51,7 +51,7 @@ async function deleteRole(req, res) {
   try {
     const id = req.params.id
     const role = await mRole.findByIdAndDelete(id)
-    resp.makeResponsesOk(res, role, "Success")
+    resp.makeResponsesOkData(res, role, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
   }

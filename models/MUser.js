@@ -41,7 +41,6 @@ const userSchema = Schema({
   },
   lastConnection: {
     type: Date,
-    required: false,
   },
   address: {
     type: String,
