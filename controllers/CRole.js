@@ -1,12 +1,11 @@
 const mRole = require('../models/MRole')
 const resp = require('../utils/responses')
 
-async function createRole(req, res) {
+const createRole = async (req, res) => {
   try {
     const value = req.body
 
     const role = new mRole({
-      _id: value.id,
       name: value.name,
     })
 
@@ -17,7 +16,7 @@ async function createRole(req, res) {
   }
 }
 
-async function getAllRoles(req, res) {
+const getAllRoles = async (req, res) => {
   try {
     const roles = await mRole.find()
     resp.makeResponsesOkData(res, roles, "Success")
@@ -26,7 +25,7 @@ async function getAllRoles(req, res) {
   }
 }
 
-async function getRoleById(req, res) {
+const getRoleById = async (req, res) => {
   try {
     const id = req.params.id
     const role = await mRole.findById(id)
@@ -36,7 +35,7 @@ async function getRoleById(req, res) {
   }
 }
 
-async function updateRole(req, res) {
+const updateRole = async (req, res) => {
   try {
     const id = req.params.id
     const value = req.body
@@ -47,7 +46,7 @@ async function updateRole(req, res) {
   }
 }
 
-async function deleteRole(req, res) {
+const deleteRole = async (req, res) => {
   try {
     const id = req.params.id
     const role = await mRole.findByIdAndDelete(id)

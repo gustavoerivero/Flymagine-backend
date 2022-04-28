@@ -1,10 +1,11 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const mUser = require('../models/MUser')
+const mUserBook = require('../models/MUserBook')
 const resp = require('../utils/responses')
 const validate = require('../utils/validate')
 
-async function createUser(req, res) {
+const createUser = async (req, res) => {
   try {
     const value = req.body
 
@@ -25,6 +26,7 @@ async function createUser(req, res) {
       photo: value.photo,
       address: valUser.address,
       phone: valUser.phone,
+      biography: valUser.biography,
       birthday: valUser.birthday, 
     })
 
@@ -37,7 +39,7 @@ async function createUser(req, res) {
   }
 }
 
-async function login(req, res) {
+const login = async (req, res) => {
   try {
 
     const valUser = await mUser.findOne({
@@ -72,7 +74,8 @@ async function login(req, res) {
       photo: valUser.photo,
       address: valUser.address,
       phone: valUser.phone,
-      birthday: valUser.birthday,      
+      birthday: valUser.birthday,  
+      biography: valUser.biography,    
       token: token
     }
 
@@ -83,7 +86,7 @@ async function login(req, res) {
   }
 }
 
-async function getAllUsers(req, res) {
+const getAllUsers = async (req, res) => {
   try {
     const users = await mUser.find()
     resp.makeResponsesOkData(res, users, "Success")
@@ -92,7 +95,7 @@ async function getAllUsers(req, res) {
   }
 }
 
-async function getUser(req, res) {
+const getUser = async (req, res) => {
   try {
     const user = await mUser.findOne({_id: req.params.id})
     resp.makeResponsesOkData(res, user, "Success")
@@ -101,7 +104,7 @@ async function getUser(req, res) {
   }
 }
 
-async function updateUser(req, res) {
+const updateUser = async (req, res) => {
   try {
     const user = await mUser.findOne({_id: req.params.id})
     const data = req.body
@@ -123,7 +126,7 @@ async function updateUser(req, res) {
   }
 }
 
-async function deleteUser(req, res) {
+const deleteUser = async (req, res) => {
   try {
     const user = await mUser.findOne({_id: req.params.id})
 

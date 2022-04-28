@@ -56,12 +56,19 @@ const userSchema = Schema({
     type: Date,
     required: true,
   },
+  biography: {
+    type: String,
+    required: false,
+    maxlength: 255,
+  },
   deletedAt: {
     type: Date,
+    required: false,
+    default: null,
   },
   status: {
     type: String,
-    default: 'A',
+    default: 'A', // A = Active, I = Inactive
     maxlength: 1,
     required: true,
   },
