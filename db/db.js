@@ -1,7 +1,7 @@
 const moongose = require('mongoose')
 require('dotenv').config()
 
-let url = process.env.CONNECTION_STRING
+let url = process.env.CONNECTION_STRING.toString()
 
 moongose
   .connect(url)

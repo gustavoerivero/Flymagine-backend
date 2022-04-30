@@ -17,7 +17,7 @@ const roleSchema = new Schema({
     type: String,
     maxlength: 1,
     default: 'A', // A = Active, I = Inactive
-    required: true,
+    required: false,
   }
 }, { timestamps: true })
 

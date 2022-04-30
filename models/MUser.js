@@ -10,42 +10,33 @@ const userSchema = Schema({
   firstName: {
     type: String,
     required: true,
-    maxlength: 255,
+    maxlength: 40,
   },
   lastName: {
     type: String,
     required: true,
-    maxlength: 255,
+    maxlength: 40,
   },
   email: {
     type: String,
     required: true,
-    maxlength: 255,
+    maxlength: 40,
     unique: true,
   },
   password: {
     type: String,
     required: true,
-    minlength: 8,
-    maxlength: 16,
+    minlength: 60,
   },
   photo: {
     type: String,
     required: true,
     maxlength: 255,
   },
-  creationDate: {
-    type: Date,
-    default: Date.now,
-    required: true,
-  },
-  lastConnection: {
-    type: Date,
-  },
   address: {
     type: String,
     required: false,
-    maxlength: 255,
+    maxlength: 100,
   },
   phone: {
     type: String,
@@ -54,24 +45,29 @@ const userSchema = Schema({
   },
   birthday: {
     type: Date,
-    required: true,
+    required: false,
   },
   biography: {
     type: String,
     required: false,
     maxlength: 255,
   },
-  deletedAt: {
+  lastConnection: {
     type: Date,
     required: false,
-    default: null,
+    default: Date.now(),
   },
   status: {
     type: String,
     default: 'A', // A = Active, I = Inactive
     maxlength: 1,
-    required: true,
+    required: false,
   },
+  deletedAt: {
+    type: Date,
+    required: false,
+    default: null,
+  }
 }, { timestamps: true })
 
 module.exports = mongoose.model('MUser', userSchema)

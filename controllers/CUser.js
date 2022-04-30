@@ -8,12 +8,12 @@ const validate = require('../utils/validate')
 const createUser = async (req, res) => {
   try {
     const value = req.body
-
-    const valUser = await mUser.findOne({
+    
+    const _User = await mUser.findOne({
       email: value.email
     })
 
-    if (valUser) {
+    if (_user) {
       resp.makeResponsesError(res, "UFound")
     }
 
@@ -22,20 +22,20 @@ const createUser = async (req, res) => {
       firstName: value.firstName,
       lastName: value.lastName,
       email: value.email,
-      password: bcrypt.hashSync(value.password, 8),
+      password: bcrypt.hashSync(value.password),
       photo: value.photo,
-      address: valUser.address,
-      phone: valUser.phone,
-      biography: valUser.biography,
-      birthday: valUser.birthday, 
+      address: value.address,
+      phone: value.phone,
+      biography: value.biography,
+      birthday: value.birthday
     })
-
+    
     const saveUser = await user.save()
-
+    console.log(saveUser)
     resp.makeResponsesOkData(res, saveUser, "UCreated")
 
   } catch (error) {
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesException(res, error)
   }
 }
 
@@ -82,7 +82,7 @@ const login = async (req, res) => {
     resp.makeResponsesOkData(res, user, "Success")
 
   } catch (error) {
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesException(res, error)
   }
 }
 
