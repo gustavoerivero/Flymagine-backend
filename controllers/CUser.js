@@ -13,7 +13,7 @@ const createUser = async (req, res) => {
       email: value.email
     })
 
-    if (_user) {
+    if (_User) {
       resp.makeResponsesError(res, "UFound")
     }
 
