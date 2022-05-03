@@ -7,10 +7,7 @@ const createPost = async (req, res) => {
 
     const post = new mPost({
       idUser: value.idUser,
-      description: value.description,
-      postDate: value.postDate,
-      status: value.status,
-      deletedAt: value.deletedAt
+      description: value.description
     })
 
     const savePost = await post.save()
