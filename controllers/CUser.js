@@ -4,6 +4,10 @@ const mUser = require('../models/MUser')
 const resp = require('../utils/responses')
 const validate = require('../utils/validate')
 
+// Actios for books
+const mUserBook = require('../models/MUserBook')
+const mBook = require('../models/MBook')
+
 const createUser = async (req, res) => {
   try {
     const value = req.body
@@ -178,11 +182,128 @@ const deleteUser = async (req, res) => {
   }
 }
 
+/**
+ * Actios for books
+ */
+
+const setUserBook = async (req, res) => {
+  try {
+
+    const value = req.body
+
+    if (!await mUser.findOne({ _id: req.params.id, status: 'A' })) {
+
+      return resp.makeResponsesError(res, "UNotFound")
+
+    } else if (!await mBook.findOne({ _id: value.idBook, status: 'A' })) {
+
+      return resp.makeResponsesError(res, "BNotFound")
+
+    } else if (await mUserBook.findOne({ idUser: req.params.id, idBook: value.idBook })) {
+
+      const saveUserBook = await mUserBook.findOneAndUpdate({ idUser: req.params.id, idBook: value.idBook }, {
+        $set: {
+          favourite: value.favourite,
+          status: value.status
+        }
+      })
+
+      resp.makeResponsesOkData(res, saveUserBook, "Success")
+
+    } else {
+
+      const userBook = new mUserBook({
+        idUser: req.params.id,
+        idBook: value.idBook,
+        favourite: value.favourite,
+        status: value.status
+      })
+
+      const saveUserBook = await userBook.save()
+      resp.makeResponsesOkData(res, saveUserBook, "Success")
+
+    }
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
+const getFavouritesBooksByUser = async (req, res) => {
+  try {
+
+    if (!await mUser.findOne({ _id: req.params.id, status: 'A' })) {
+      return resp.makeResponsesError(res, "UNotFound")
+    } else {
+
+      const books = await mUserBook.find({ idUser: req.params.id, favourite: true })
+      resp.makeResponsesOkData(res, books, "Success")
+
+    }
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
+const getToReadBooksByUser = async (req, res) => {
+  try {
+
+    if (!await mUser.findOne({ _id: req.params.id, status: 'A' })) {
+      return resp.makeResponsesError(res, "UNotFound")
+    } else {
+
+      const books = await mUserBook.find({ idUser: req.params.id, status: 'T' })
+      resp.makeResponsesOkData(res, books, "Success")
+
+    }
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
+const getReadingBooksByUser = async (req, res) => {
+  try {
+
+    if (!await mUser.findOne({ _id: req.params.id, status: 'A' })) {
+      return resp.makeResponsesError(res, "UNotFound")
+    } else {
+
+      const books = await mUserBook.find({ idUser: req.params.id, status: 'R' })
+      resp.makeResponsesOkData(res, books, "Success")
+
+    }
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
+const getReadBooksByUser = async (req, res) => {
+  try {
+
+    if (!await mUser.findOne({ _id: req.params.id, status: 'A' })) {
+      return resp.makeResponsesError(res, "UNotFound")
+    } else {
+
+      const books = await mUserBook.find({ idUser: req.params.id, status: 'D' })
+      resp.makeResponsesOkData(res, books, "Success")
+
+    }
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
 module.exports = {
   createUser,
   login,
   getAllUsers,
   getUser,
   updateUser,
-  deleteUser
+  deleteUser,
+  setUserBook,
+  getFavouritesBooksByUser,
+  getToReadBooksByUser,
+  getReadingBooksByUser,
+  getReadBooksByUser
 }

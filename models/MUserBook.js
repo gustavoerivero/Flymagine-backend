@@ -19,7 +19,7 @@ const userBookSchema = new Schema({
   },
   status: {
     type: String,
-    default: 'T', // T = To read, R = Reading, D = Read
+    default: 'T', // T = To read, R = Reading, D = Read, I = Inactive
     required: true,
     maxlength: 1,
   },
