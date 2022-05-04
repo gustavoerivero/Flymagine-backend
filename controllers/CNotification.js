@@ -21,7 +21,7 @@ const createNotification = async (req, res) => {
 
 const getAllNotification = async (req, res) => {
   try {
-    const notifications = await mNotification.find()
+    const notifications = await mNotification.find({ status: 'A' })
     resp.makeResponsesOkData(res, notifications, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -30,8 +30,7 @@ const getAllNotification = async (req, res) => {
 
 const getNotificationByUser = async (req, res) => {
   try {
-    const idUser = req.params.idUser
-    const notification = await mNotification.find({idUser: idUser})
+    const notification = await mNotification.find({ idUser: req.params.id, status: 'A' })
     resp.makeResponsesOkData(res, notification, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -40,8 +39,7 @@ const getNotificationByUser = async (req, res) => {
 
 const getNotificationById = async (req, res) => {
   try {
-    const idNotification = req.params.idNotification
-    const notification = await mNotification.findById(idNotification)
+    const notification = await mNotification.findOne({ _id: req.params.id, status: 'A' })
     resp.makeResponsesOkData(res, notification, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -50,22 +48,21 @@ const getNotificationById = async (req, res) => {
 
 const updateNotification = async (req, res) => {
   try {
-    const idNotification = req.params.idNotification
     const value = req.body
 
-    const notification = await mNotification.findById(idNotification)
+    const notification = await mNotification.findById(req.params.id)
 
-    if(!notification) {
-      return resp.makeResponsesError(res, "UNotFound")
+    if (!notification) {
+      return resp.makeResponsesError(res, "NNotFound")
     }
 
-    const saveNotification = await notification.updateOne({
-      _id: idNotification,
-    }, {
-      $set: value
+    const saveNotification = await mNotification.findOneAndUpdate({ _id: req.params.id, status: 'A' }, {
+      $set: {
+        description: value.description,
+      }
     })
 
-    resp.makeResponsesOkData(res, saveNotification, "UUpdated")
+    resp.makeResponsesOkData(res, saveNotification, "NUpdated")
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -74,20 +71,21 @@ const updateNotification = async (req, res) => {
 
 const deleteNotification = async (req, res) => {
   try {
-    const idNotification = req.params.idNotification
 
-    const notification = await mNotification.findById(idNotification)
+    const notification = await mNotification.findById(req.params.id)
 
-    if(!notification) {
-      return resp.makeResponsesError(res, "UNotFound")
+    if (!notification) {
+      return resp.makeResponsesError(res, "NNotFound")
     }
 
-    const saveNotification = await notification.updateOne({
-      _id: idNotification,
-      status: 'I'
+    const saveNotification = await mNotification.findOneAndUpdate({ _id: req.params.id, status: 'A' }, {
+      $set: {
+        status: 'I',
+        deletedAt: new Date()
+      }
     })
 
-    resp.makeResponsesOkData(res, saveNotification, "DDeleted")
+    resp.makeResponsesOkData(res, saveNotification, "NDeleted")
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -96,31 +94,21 @@ const deleteNotification = async (req, res) => {
 
 const readNotification = async (req, res) => {
   try {
-    const idNotification = req.params.idNotification
 
-    const notification = await mNotification.findById(idNotification)
+    const notification = await mNotification.findOne({ _id: req.params.id, status: 'A' })
 
-    if(!notification) {
-      return resp.makeResponsesError(res, "UNotFound")
+    if (!notification) {
+      return resp.makeResponsesError(res, "NNotFound")
     }
 
-    const saveNotification = await notification.updateOne({
-      _id: idNotification,
-      isRead: true
+    const saveNotification = await mNotification.findOneAndUpdate({ _id: req.params.id, status: 'A' }, {
+      $set: {
+        isRead: true,
+      }
     })
 
     resp.makeResponsesOkData(res, saveNotification, "Success")
 
-  } catch (error) {
-    resp.makeResponsesError(res, error)
-  }
-}
-
-const deleteAllNotificationByUser = async (req, res) => {
-  try {
-    const idUser = req.params.idUser
-    const notifications = await mNotification.deleteMany({idUser: idUser})
-    resp.makeResponsesOkData(res, notifications, "DDeleted")
   } catch (error) {
     resp.makeResponsesError(res, error)
   }
@@ -133,6 +121,5 @@ module.exports = {
   getNotificationById,
   updateNotification,
   deleteNotification,
-  readNotification,
-  deleteAllNotificationByUser
+  readNotification
 }

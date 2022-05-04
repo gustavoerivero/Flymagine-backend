@@ -14,7 +14,7 @@ const createReview = async (req, res) => {
 
     const saveReview = await review.save()
 
-    resp.makeResponsesOkData(res, saveReview, "RCreated")
+    resp.makeResponsesOkData(res, saveReview, "RVCreated")
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -24,9 +24,9 @@ const createReview = async (req, res) => {
 const getAllReviews = async (req, res) => {
   try {
 
-    const reviews = await mReview.find()
+    const reviews = await mReview.find({ status: 'A' })
 
-    resp.makeResponsesOkData(res, reviews, "RGetAll")
+    resp.makeResponsesOkData(res, reviews, "RVGetAll")
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -36,9 +36,9 @@ const getAllReviews = async (req, res) => {
 const getReviewById = async (req, res) => {
   try {
 
-    const review = await mReview.findById(req.params.id)
+    const review = await mReview.findOne({ _id: req.params.id, status: 'A' })
 
-    resp.makeResponsesOkData(res, review, "RGetById")
+    resp.makeResponsesOkData(res, review, "RVGetById")
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -48,9 +48,9 @@ const getReviewById = async (req, res) => {
 const getReviewByBook = async (req, res) => {
   try {
 
-    const review = await mReview.find({ idBook: req.params.idBook })
+    const review = await mReview.find({ idBook: req.params.idBook, status: 'A' })
 
-    resp.makeResponsesOkData(res, review, "RGetByBook")
+    resp.makeResponsesOkData(res, review, "RVGetByBook")
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -60,9 +60,9 @@ const getReviewByBook = async (req, res) => {
 const getReviewByUser = async (req, res) => {
   try {
 
-    const review = await mReview.find({ idUser: req.params.idUser })
+    const review = await mReview.find({ idUser: req.params.idUser, status: 'A' })
 
-    resp.makeResponsesOkData(res, review, "RGetByUser")
+    resp.makeResponsesOkData(res, review, "RVGetByUser")
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -72,21 +72,22 @@ const getReviewByUser = async (req, res) => {
 const updateReview = async (req, res) => {
   try {
 
-    const review = await mReview.findById(req.params.id)
+    const review = await mReview.findOne({ _id: req.params.id, status: 'A' })
 
     if (!review) {
-      return resp.makeResponsesError(res, "RNotFound")
+      return resp.makeResponsesError(res, "RVNotFound")
     }
 
     const data = req.body
 
-    const saveReview = await review.updateOne({
-      _id: req.params.id,
-    }, {
-      $set: data
+    const saveReview = await mReview.findOneAndUpdate({ _id: req.params.id, status: 'A' }, {
+      $set: {
+        description: data.description,
+        rating: data.rating
+      }
     })
 
-    resp.makeResponsesOkData(res, updateReview, "RUpdated")
+    resp.makeResponsesOkData(res, saveReview, "RVUpdated")
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -96,21 +97,20 @@ const updateReview = async (req, res) => {
 const deleteReview = async (req, res) => {
   try {
 
-    const review = await mReview.findById(req.params.id)
+    const review = await mReview.findOne({ _id: req.params.id, status: 'A' })
 
     if (!review) {
-      return resp.makeResponsesError(res, "RNotFound")
+      return resp.makeResponsesError(res, "RVNotFound")
     }
 
-    const saveReview = await review.updateOne({
-      _id: req.params.id,
-    }, {
+    const saveReview = await mReview.findOneAndUpdate({ _id: req.params.id, status: 'A' }, {
       $set: {
+        status: 'I',
         deletedAt: new Date()
       }
     })
 
-    resp.makeResponsesOkData(res, deleteReview, "RDeleted")
+    resp.makeResponsesOkData(res, saveReview, "RVDeleted")
 
   } catch (error) {
     resp.makeResponsesError(res, error)

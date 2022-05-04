@@ -3,21 +3,48 @@ const resp = require('../utils/responses')
 
 const createBook = async (req, res) => {
   try {
+
     const value = req.body
 
-    const book = new mBook({
+    const book = await mBook.findOne({
       idUser: value.idUser,
       name: value.name,
-      sypnosis: value.sypnosis,
-      photo: value.photo,
-      document: value.document,
-      postDate: value.postDate,
-      creationDate: value.creationDate,
+      status: 'A'
     })
 
-    const saveBook = await book.save()
+    if (book) {
+      resp.makeResponsesError(res, "BFound")
 
-    resp.makeResponsesOkData(res, saveBook, "BCreated")
+    } else if (await mBook.findOne({
+      idUser: value.idUser,
+      name: value.name,
+      status: 'I'
+    })) {
+
+      const saveBook = await mBook.findOneAndUpdate({ idUser: value.idUser, name: value.name }, {
+        $set: {
+          status: 'A',
+          deletedAt: null
+        }
+      })
+
+      resp.makeResponsesOkData(res, saveBook, "Success")
+
+    } else {
+
+      const book = new mBook({
+        idUser: value.idUser,
+        name: value.name,
+        sypnosis: value.sypnosis,
+        photo: value.photo,
+        document: value.document,
+        creationDate: value.creationDate,
+      })
+
+      const saveBook = await book.save()
+
+      resp.makeResponsesOkData(res, saveBook, "BCreated")
+    }
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -27,7 +54,7 @@ const createBook = async (req, res) => {
 const getAllBooks = async (req, res) => {
   try {
 
-    const books = await mBook.find()
+    const books = await mBook.find({ status: 'A' })
 
     resp.makeResponsesOkData(res, books, "BGetAll")
 
@@ -39,7 +66,7 @@ const getAllBooks = async (req, res) => {
 const getBookById = async (req, res) => {
   try {
 
-    const book = await mBook.findById(req.params.id)
+    const book = await mBook.findOne({ _id: req.params.id, status: 'A' })
 
     resp.makeResponsesOkData(res, book, "BGetById")
 
@@ -51,7 +78,7 @@ const getBookById = async (req, res) => {
 const updateBook = async (req, res) => {
   try {
 
-    const book = await mBook.findById(req.params.id)
+    const book = await mBook.findOne({ _id: req.params.id, status: 'A' })
 
     if (!book) {
       return resp.makeResponsesError(res, "BNotFound")
@@ -59,13 +86,9 @@ const updateBook = async (req, res) => {
 
     const data = req.body
 
-    const saveBook = await book.updateOne({
-      _id: req.params.id,
-    }, {
-      $set: data
-    })
+    const saveBook = await mBook.findByIdAndUpdate(req.params.id, data)
 
-    resp.makeResponsesOkData(res, updateBook, "BUpdated")
+    resp.makeResponsesOkData(res, saveBook, "BUpdated")
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -75,21 +98,18 @@ const updateBook = async (req, res) => {
 const deleteBook = async (req, res) => {
   try {
 
-    const book = await mBook.findById(req.params.id)
+    const book = await mBook.findOne({ _id: req.params.id, status: 'A' })
 
     if (!book) {
       return resp.makeResponsesError(res, "BNotFound")
     }
 
-    const saveBook = await book.updateOne({
-      _id: req.params.id,
-    }, {
-      $set: {
-        deletedAt: new Date()
-      }
+    const saveBook = await mBook.findByIdAndUpdate(req.params.id, {
+      status: 'I',
+      deletedAt: new Date()
     })
 
-    resp.makeResponsesOkData(res, deleteBook, "BDeleted")
+    resp.makeResponsesOkData(res, saveBook, "BDeleted")
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -100,7 +120,8 @@ const getBooksByUser = async (req, res) => {
   try {
 
     const books = await mBook.find({
-      idUser: req.params.id
+      idUser: req.params.id,
+      status: 'A'
     })
 
     resp.makeResponsesOkData(res, books, "BGetByUser")

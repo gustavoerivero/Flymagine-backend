@@ -7,7 +7,7 @@ const createPhotoPost = async (req, res) => {
 
     const photoPost = new mPhotoPost({
       idPost: value.idPost,
-      image: value.image,
+      photo: value.photo,
     })
 
     const savePhotoPost = await photoPost.save()
@@ -61,7 +61,11 @@ const updatePhotoPost = async (req, res) => {
     const id = req.params.id
     const value = req.body
 
-    const photoPost = await mPhotoPost.findByIdAndUpdate(id, value, { new: true })
+    const photoPost = await mPhotoPost.findByIdAndUpdate(id, {
+      $set: {
+        photo: value.photo,
+      }
+    })
 
     resp.makeResponsesOkData(res, photoPost, "PHUpdated")
 

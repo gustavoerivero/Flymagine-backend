@@ -21,7 +21,7 @@ const createCommentPost = async (req, res) => {
 
 const getAllCommentPost = async (req, res) => {
   try {
-    const commentPosts = await mCommentPost.find()
+    const commentPosts = await mCommentPost.find({ status: 'A'})
     resp.makeResponsesOkData(res, commentPosts, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -30,8 +30,7 @@ const getAllCommentPost = async (req, res) => {
 
 const getCommentPostByPost = async (req, res) => {
   try {
-    const idPost = req.params.idPost
-    const commentPost = await mCommentPost.find({ idPost: idPost })
+    const commentPost = await mCommentPost.find({ idPost: req.params.idPost, status: 'A' })
     resp.makeResponsesOkData(res, commentPost, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -40,8 +39,7 @@ const getCommentPostByPost = async (req, res) => {
 
 const getCommentPostById = async (req, res) => {
   try {
-    const idCommentPost = req.params.idCommentPost
-    const commentPost = await mCommentPost.findById(idCommentPost)
+    const commentPost = await mCommentPost.findOne({ _id: req.params.id, status: 'A' })
     resp.makeResponsesOkData(res, commentPost, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -50,8 +48,7 @@ const getCommentPostById = async (req, res) => {
 
 const getCommentPostByUser = async (req, res) => {
   try {
-    const idUser = req.params.idUser
-    const commentPost = await mCommentPost.find({ idUser: idUser })
+    const commentPost = await mCommentPost.find({ idUser: req.params.idUser, status: 'A' })
     resp.makeResponsesOkData(res, commentPost, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -60,22 +57,22 @@ const getCommentPostByUser = async (req, res) => {
 
 const updateCommentPost = async (req, res) => {
   try {
-    const idCommentPost = req.params.idCommentPost
+
     const value = req.body
 
-    const commentPost = await mCommentPost.findById(idCommentPost)
+    const commentPost = await mCommentPost.findOne({ _id: req.params.id, status: 'A' })
 
     if (!commentPost) {
-      return resp.makeResponsesError(res, "UNotFound")
+      return resp.makeResponsesError(res, "CPNotFound")
     }
 
-    const saveCommentPost = await commentPost.updateOne({
-      idPost: value.idPost,
-      idUser: value.idUser,
-      description: value.description,
+    const saveCommentPost = await mCommentPost.findOneAndUpdate({ _id: req.params.id, status: 'A' }, {
+      $set: {
+        description: value.description,
+      }
     })
 
-    resp.makeResponsesOkData(res, saveCommentPost, "UPCreated")
+    resp.makeResponsesOkData(res, saveCommentPost, "CPUpdated")
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -84,17 +81,21 @@ const updateCommentPost = async (req, res) => {
 
 const deleteCommentPost = async (req, res) => {
   try {
-    const idCommentPost = req.params.idCommentPost
 
-    const commentPost = await mCommentPost.findById(idCommentPost)
+    const commentPost = await mCommentPost.findById(req.params.id)
 
     if (!commentPost) {
-      return resp.makeResponsesError(res, "DNotFound")
+      return resp.makeResponsesError(res, "CPNotFound")
     }
 
-    const deleteCommentPost = await commentPost.remove()
+    const deleteCommentPost = await mCommentPost.findOneAndUpdate({ _id: req.params.id, status: 'A' }, {
+      $set: {
+        status: 'I',
+        deletedAt: new Date()
+      }
+    })
 
-    resp.makeResponsesOkData(res, deleteCommentPost, "DDeleted")
+    resp.makeResponsesOkData(res, deleteCommentPost, "CPDeleted")
 
   } catch (error) {
     resp.makeResponsesError(res, error)

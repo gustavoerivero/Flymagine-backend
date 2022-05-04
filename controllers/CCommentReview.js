@@ -14,7 +14,7 @@ const createCommentReview = async (req, res) => {
 
     const saveCommentReview = await commentReview.save()
 
-    resp.makeResponsesOkData(res, saveCommentReview, "CCreated")
+    resp.makeResponsesOkData(res, saveCommentReview, "CRCreated")
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -23,11 +23,10 @@ const createCommentReview = async (req, res) => {
 
 const getCommentReview = async (req, res) => {
   try {
-    const id = req.params.id
 
-    const commentReview = await mCommentReview.findById(id)
+    const commentReview = await mCommentReview.findOne({ _id: req.params.id, status: 'A' })
 
-    resp.makeResponsesOkData(res, commentReview, "CGet")
+    resp.makeResponsesOkData(res, commentReview, "CRGet")
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -36,9 +35,9 @@ const getCommentReview = async (req, res) => {
 
 const getCommentReviews = async (req, res) => {
   try {
-    const commentReviews = await mCommentReview.find()
+    const commentReviews = await mCommentReview.find({ status: 'A' })
 
-    resp.makeResponsesOkData(res, commentReviews, "CGetAll")
+    resp.makeResponsesOkData(res, commentReviews, "CRGetAll")
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -47,11 +46,10 @@ const getCommentReviews = async (req, res) => {
 
 const getCommentReviewsByReview = async (req, res) => {
   try {
-    const id = req.params.id
 
-    const commentReviews = await mCommentReview.find({ idReview: id })
+    const commentReviews = await mCommentReview.find({ idReview: req.params.id, status: 'A' })
 
-    resp.makeResponsesOkData(res, commentReviews, "CGetAllByReview")
+    resp.makeResponsesOkData(res, commentReviews, "CRGetAllByReview")
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -60,9 +58,8 @@ const getCommentReviewsByReview = async (req, res) => {
 
 const getCommentReviewsByUser = async (req, res) => {
   try {
-    const id = req.params.id
 
-    const commentReviews = await mCommentReview.find({ idUser: id })
+    const commentReviews = await mCommentReview.find({ idUser: req.params.id, status: 'A' })
 
     resp.makeResponsesOkData(res, commentReviews, "CGetAllByUser")
 
@@ -73,12 +70,24 @@ const getCommentReviewsByUser = async (req, res) => {
 
 const updateCommentReview = async (req, res) => {
   try {
-    const id = req.params.id
     const value = req.body
 
-    const commentReview = await mCommentReview.findByIdAndUpdate(id, value, { new: true })
+    if (!await mCommentReview.findOne({ _id: req.params.id, status: 'A' })) {
 
-    resp.makeResponsesOkData(res, commentReview, "CUpdated")
+      return resp.makeResponsesError(res, "CRNotFound")
+
+    } else {
+
+      const commentReview = await mCommentReview.findByIdAndUpdate(req.params.id, {
+        $set: {
+          description: value.description
+        }
+      })
+
+      resp.makeResponsesOkData(res, commentReview, "CRUpdated")
+
+
+    }
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -87,11 +96,22 @@ const updateCommentReview = async (req, res) => {
 
 const deleteCommentReview = async (req, res) => {
   try {
-    const id = req.params.id
 
-    const commentReview = await mCommentReview.findByIdAndDelete(id)
+    const commentReview = await mCommentReview.findById(req.params.id)
 
-    resp.makeResponsesOkData(res, commentReview, "CDeleted")
+    if (!commentReview) {
+      return resp.makeResponsesError(res, "CRNotFound")
+    }
+
+    const deleteCommentReview = await mCommentReview.findByIdAndUpdate(req.params.id, {
+      $set: {
+        status: 'I',
+        deletedAt: new Date()
+      }
+    })
+
+    resp.makeResponsesOkData(res, deleteCommentReview, "CRDeleted")
+
 
   } catch (error) {
     resp.makeResponsesError(res, error)

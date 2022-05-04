@@ -5,13 +5,25 @@ const createLiteraryGenre = async (req, res) => {
   try {
     const value = req.body
 
-    const literaryGenre = new mLiteraryGenre({
-      name: value.name,
-    })
+    if (await mLiteraryGenre.findOne({ name: value.name, status: 'A' })) {
+      resp.makeResponsesError(res, "LGFound")
+    } else if (await mLiteraryGenre.findOne({ name: value.name, status: 'I' })) {
+      const saveLiteraryGenre = await mLiteraryGenre.findOneAndUpdate({ name: value.name }, {
+        $set: {
+          status: 'A',
+          deletedAt: null
+        }
+      })
+      resp.makeResponsesOkData(res, saveLiteraryGenre, "Success")
+    } else {
+      const literaryGenre = new mLiteraryGenre({
+        name: value.name,
+      })
 
-    const saveLiteraryGenre = await literaryGenre.save()
+      const saveLiteraryGenre = await literaryGenre.save()
 
-    resp.makeResponsesOkData(res, saveLiteraryGenre, "LCreated")
+      resp.makeResponsesOkData(res, saveLiteraryGenre, "LGCreated")
+    }
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -21,9 +33,9 @@ const createLiteraryGenre = async (req, res) => {
 const getAllLiteraryGenres = async (req, res) => {
   try {
 
-    const literaryGenres = await mLiteraryGenre.find()
+    const literaryGenres = await mLiteraryGenre.find({ status: 'A' })
 
-    resp.makeResponsesOkData(res, literaryGenres, "LGetAll")
+    resp.makeResponsesOkData(res, literaryGenres, "LGGetAll")
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -33,9 +45,9 @@ const getAllLiteraryGenres = async (req, res) => {
 const getLiteraryGenreById = async (req, res) => {
   try {
 
-    const literaryGenre = await mLiteraryGenre.findById(req.params.id)
+    const literaryGenre = await mLiteraryGenre.findOne({ _id: req.params.id, status: 'A' })
 
-    resp.makeResponsesOkData(res, literaryGenre, "LGetById")
+    resp.makeResponsesOkData(res, literaryGenre, "LGGetById")
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -45,21 +57,19 @@ const getLiteraryGenreById = async (req, res) => {
 const updateLiteraryGenre = async (req, res) => {
   try {
 
-    const literaryGenre = await mLiteraryGenre.findById(req.params.id)
+    const literaryGenre = await mLiteraryGenre.findOne({ _id: req.params.id, status: 'A' })
 
     if (!literaryGenre) {
-      return resp.makeResponsesError(res, "LNotFound")
+      return resp.makeResponsesError(res, "LGNotFound")
     }
 
-    const value = req.body
+    const saveLiteraryGenre = await mLiteraryGenre.findOneAndUpdate({ _id: req.params.id, status: 'A' }, {
+      $set: {
+        name: req.body.name
+      }
+    })
 
-    literaryGenre.name = value.name
-    literaryGenre.deletedAt = value.deletedAt
-    literaryGenre.status = value.status
-
-    const saveLiteraryGenre = await literaryGenre.save()
-
-    resp.makeResponsesOkData(res, saveLiteraryGenre, "LUpdated")
+    resp.makeResponsesOkData(res, saveLiteraryGenre, "LGUpdated")
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -72,14 +82,17 @@ const deleteLiteraryGenre = async (req, res) => {
     const literaryGenre = await mLiteraryGenre.findById(req.params.id)
 
     if (!literaryGenre) {
-      return resp.makeResponsesError(res, "LNotFound")
+      return resp.makeResponsesError(res, "LGNotFound")
     }
 
-    literaryGenre.deletedAt = new Date()
+    const saveLiteraryGenre = await mLiteraryGenre.findOneAndUpdate({ _id: req.params.id }, {
+      $set: {
+        status: 'I',
+        deletedAt: new Date()
+      }
+    })
 
-    const saveLiteraryGenre = await literaryGenre.save()
-
-    resp.makeResponsesOkData(res, saveLiteraryGenre, "LDeleted")
+    resp.makeResponsesOkData(res, saveLiteraryGenre, "LGDeleted")
 
   } catch (error) {
     resp.makeResponsesError(res, error)

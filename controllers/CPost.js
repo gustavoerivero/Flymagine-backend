@@ -17,12 +17,12 @@ const createPost = async (req, res) => {
   } catch (error) {
     resp.makeResponsesError(res, error)
   }
-} 
+}
 
 const getAllPosts = async (req, res) => {
   try {
 
-    const posts = await mPost.find()
+    const posts = await mPost.find({ status: 'A' })
 
     resp.makeResponsesOkData(res, posts, "PGetAll")
 
@@ -34,7 +34,7 @@ const getAllPosts = async (req, res) => {
 const getPostByUser = async (req, res) => {
   try {
 
-    const post = await mPost.find({ idUser: req.params.idUser })
+    const post = await mPost.find({ idUser: req.params.idUser, status: 'A' })
 
     resp.makeResponsesOkData(res, post, "PGetByUser")
 
@@ -46,7 +46,7 @@ const getPostByUser = async (req, res) => {
 const getPostById = async (req, res) => {
   try {
 
-    const post = await mPost.findById(req.params.id)
+    const post = await mPost.findOne({ _id: req.params.id, status: 'A' })
 
     resp.makeResponsesOkData(res, post, "PGetById")
 
@@ -60,7 +60,11 @@ const updatePost = async (req, res) => {
 
     const value = req.body
 
-    const updatePost = await mPost.findByIdAndUpdate(req.params.id, value, { new: true })
+    const updatePost = await mPost.findOneAndUpdate({ _id: req.params.id, status: 'A' }, {
+      $set: {
+        description: value.description
+      }
+    })
 
     resp.makeResponsesOkData(res, updatePost, "PUpdated")
 
@@ -72,7 +76,12 @@ const updatePost = async (req, res) => {
 const deletePost = async (req, res) => {
   try {
 
-    const deletePost = await mPost.findByIdAndDelete(req.params.id)
+    const deletePost = await mPost.findOneAndUpdate({ _id: req.params.id, status: 'A' }, {
+      $set: {
+        status: 'I',
+        deletedAt: new Date()
+      }
+    })
 
     resp.makeResponsesOkData(res, deletePost, "PDeleted")
 
