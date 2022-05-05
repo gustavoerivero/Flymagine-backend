@@ -15,7 +15,7 @@ const bookSchema = new Schema({
   sypnosis: {
     type: String,
     required: true,
-    maxlength: 255,
+    maxlength: 1024,
   },
   photo: {
     type: String,

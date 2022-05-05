@@ -10,6 +10,7 @@ router.put('/:id', cUser.updateUser)
 router.delete('/:id', cUser.deleteUser)
 
 // User book actions routes
+router.post('/:id/set-book', cUser.setUserBook)
 router.get('/:id/favourite', cUser.getFavouritesBooksByUser)
 router.get('/:id/to-read', cUser.getToReadBooksByUser)
 router.get('/:id/reading', cUser.getReadingBooksByUser)

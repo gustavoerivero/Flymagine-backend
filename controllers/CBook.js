@@ -1,4 +1,4 @@
-const mBook = require('../models/mBook.js')
+const mBook = require('../models/mBook')
 const resp = require('../utils/responses')
 
 const createBook = async (req, res) => {
@@ -23,6 +23,10 @@ const createBook = async (req, res) => {
 
       const saveBook = await mBook.findOneAndUpdate({ idUser: value.idUser, name: value.name }, {
         $set: {
+          sypnosis: value.sypnosis,
+          photo: value.photo,
+          document: value.document,
+          creationDate: value.creationDate,
           status: 'A',
           deletedAt: null
         }

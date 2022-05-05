@@ -6,7 +6,6 @@ const validate = require('../utils/validate')
 
 // Actios for books
 const mUserBook = require('../models/MUserBook')
-const mBook = require('../models/MBook')
 
 const createUser = async (req, res) => {
   try {
@@ -183,7 +182,7 @@ const deleteUser = async (req, res) => {
 }
 
 /**
- * Actios for books
+ * Actions for books
  */
 
 const setUserBook = async (req, res) => {
@@ -194,10 +193,6 @@ const setUserBook = async (req, res) => {
     if (!await mUser.findOne({ _id: req.params.id, status: 'A' })) {
 
       return resp.makeResponsesError(res, "UNotFound")
-
-    } else if (!await mBook.findOne({ _id: value.idBook, status: 'A' })) {
-
-      return resp.makeResponsesError(res, "BNotFound")
 
     } else if (await mUserBook.findOne({ idUser: req.params.id, idBook: value.idBook })) {
 
