@@ -34,7 +34,7 @@ const getAllPosts = async (req, res) => {
 const getPostByUser = async (req, res) => {
   try {
 
-    const post = await mPost.find({ idUser: req.params.idUser, status: 'A' })
+    const post = await mPost.find({ idUser: req.params.id, status: 'A' })
 
     resp.makeResponsesOkData(res, post, "PGetByUser")
 

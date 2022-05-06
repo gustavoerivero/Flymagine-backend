@@ -30,7 +30,7 @@ const getAllCommentPost = async (req, res) => {
 
 const getCommentPostByPost = async (req, res) => {
   try {
-    const commentPost = await mCommentPost.find({ idPost: req.params.idPost, status: 'A' })
+    const commentPost = await mCommentPost.find({ idPost: req.params.id, status: 'A' })
     resp.makeResponsesOkData(res, commentPost, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -48,7 +48,7 @@ const getCommentPostById = async (req, res) => {
 
 const getCommentPostByUser = async (req, res) => {
   try {
-    const commentPost = await mCommentPost.find({ idUser: req.params.idUser, status: 'A' })
+    const commentPost = await mCommentPost.find({ idUser: req.params.id, status: 'A' })
     resp.makeResponsesOkData(res, commentPost, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)

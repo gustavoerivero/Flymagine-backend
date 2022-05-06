@@ -25,7 +25,7 @@ const getPhotoPost = async (req, res) => {
 
     const photoPost = await mPhotoPost.findById(id)
 
-    resp.makeResponsesOkData(res, photoPost, "PHFound")
+    resp.makeResponsesOkData(res, photoPost, "PHGet")
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -36,7 +36,7 @@ const getAllPhotoPosts = async (req, res) => {
   try {
     const photoPosts = await mPhotoPost.find()
 
-    resp.makeResponsesOkData(res, photoPosts, "PHFound")
+    resp.makeResponsesOkData(res, photoPosts, "PHGet")
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -49,7 +49,7 @@ const getPhotoPostbyPost = async (req, res) => {
 
     const photoPost = await mPhotoPost.find({ idPost: id })
 
-    resp.makeResponsesOkData(res, photoPost, "PHFound")
+    resp.makeResponsesOkData(res, photoPost, "PHGet")
 
   } catch (error) {
     resp.makeResponsesError(res, error)

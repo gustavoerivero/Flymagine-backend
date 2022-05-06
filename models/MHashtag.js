@@ -7,6 +7,12 @@ const hashtagSchema = new Schema({
     required: true,
     maxlength: 255
   },
+  status: {
+    type: String,
+    required: true,
+    enum: ['A', 'I'],
+    default: 'A'
+  },
   deleteAt: {
     type: Date,
     required: false,

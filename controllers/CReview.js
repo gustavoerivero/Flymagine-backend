@@ -48,7 +48,7 @@ const getReviewById = async (req, res) => {
 const getReviewByBook = async (req, res) => {
   try {
 
-    const review = await mReview.find({ idBook: req.params.idBook, status: 'A' })
+    const review = await mReview.find({ idBook: req.params.id, status: 'A' })
 
     resp.makeResponsesOkData(res, review, "RVGetByBook")
 
@@ -60,7 +60,7 @@ const getReviewByBook = async (req, res) => {
 const getReviewByUser = async (req, res) => {
   try {
 
-    const review = await mReview.find({ idUser: req.params.idUser, status: 'A' })
+    const review = await mReview.find({ idUser: req.params.id, status: 'A' })
 
     resp.makeResponsesOkData(res, review, "RVGetByUser")
 
