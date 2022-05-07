@@ -16,4 +16,10 @@ router.get('/:id/to-read', cUser.getToReadBooksByUser)
 router.get('/:id/reading', cUser.getReadingBooksByUser)
 router.get('/:id/read', cUser.getReadBooksByUser)
 
+// Book actions routes
+router.get('/book/:id/favourite', cUser.getFavouriteBookUsersByBook)
+router.get('/book/:id/to-read', cUser.getToReadBookUsersByBook)
+router.get('/book/:id/reading', cUser.getReadingBookUsersByBook)
+router.get('/book/:id/read', cUser.getReadingBookUsersByBook)
+
 module.exports = router

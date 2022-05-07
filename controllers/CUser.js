@@ -1,12 +1,16 @@
+// User imports
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const mUser = require('../models/MUser')
 const resp = require('../utils/responses')
 const validate = require('../utils/validate')
 
-// Actios for books
+// UserBook imports
 const mUserBook = require('../models/MUserBook')
 
+/**
+ * User CRUD
+ */
 const createUser = async (req, res) => {
   try {
     const value = req.body
@@ -77,15 +81,7 @@ const login = async (req, res) => {
       return resp.makeResponsesError(res, "ULoginError2")
     }
 
-    const token = jwt.sign(
-      {
-        id: valUser._id,
-      },
-      "Flymagine-secret",
-      {
-        expiresIn: "86400"
-      }
-    )
+    const token = jwt.sign({ id: valUser._id, }, "Flymagine-secret", { expiresIn: "86400" })
 
     const user = {
       id: valUser._id,
@@ -289,16 +285,73 @@ const getReadBooksByUser = async (req, res) => {
   }
 }
 
+/**
+ * Books actions
+ */
+
+const getFavouriteBookUsersByBook = async (req, res) => {
+  try {
+
+    const book = await mUserBook.find({ idBook: req.params.id, favourite: true })
+    resp.makeResponsesOkData(res, book, "Success")
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
+const getToReadBookUsersByBook = async (req, res) => {
+  try {
+
+    const book = await mUserBook.find({ idBook: req.params.id, status: 'T' })
+    resp.makeResponsesOkData(res, book, "Success")
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
+const getReadingBookUsersByBook = async (req, res) => {
+  try {
+
+    const book = await mUserBook.find({ idBook: req.params.id, status: 'R' })
+    resp.makeResponsesOkData(res, book, "Success")
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
+const getReadBookUsersByBook = async (req, res) => {
+  try {
+
+    const book = await mUserBook.find({ idBook: req.params.id, status: 'D' })
+    resp.makeResponsesOkData(res, book, "Success")
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
 module.exports = {
+  // Users
   createUser,
   login,
   getAllUsers,
   getUser,
   updateUser,
   deleteUser,
+
+  // Actions for books
   setUserBook,
   getFavouritesBooksByUser,
   getToReadBooksByUser,
   getReadingBooksByUser,
-  getReadBooksByUser
+  getReadBooksByUser,
+
+  // Books actions
+  getFavouriteBookUsersByBook,
+  getToReadBookUsersByBook,
+  getReadingBookUsersByBook,
+  getReadBookUsersByBook
 }

@@ -1,6 +1,11 @@
+// Book imports
 const mBook = require('../models/mBook')
 const resp = require('../utils/responses')
 
+// BookGenre imports
+const mBookGenre = require('../models/mBookGenre')
+
+// Book CRUD
 const createBook = async (req, res) => {
   try {
 
@@ -135,11 +140,68 @@ const getBooksByUser = async (req, res) => {
   }
 }
 
+/**
+ * Book actions
+ */
+
+const setBookGenre = async (req, res) => {
+  try {
+
+    const book = await mBook.findOne({ _id: req.params.id, status: 'A' })
+
+    if (!book) {
+      return resp.makeResponsesError(res, "BNotFound")
+    } else if (await mBookGenre.findOne({ idBook: req.params.id, idLiteraryGenre: req.body.idLiteraryGenre })) {
+      return resp.makeResponsesError(res, "BGenreFound")
+    } else {
+      const bookGenre = new mBookGenre({
+        idBook: req.params.id,
+        idLiteraryGenre: req.body.idLiteraryGenre
+      })
+      const saveBookGenre = await bookGenre.save()
+
+      resp.makeResponsesOkData(res, saveBookGenre, "BGenreCreated")
+
+    }
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
+const getBookGenres = async (req, res) => {
+  try {
+
+    const book = await mBookGenre.find({ idBook: req.params.id })
+    resp.makeResponsesOkData(res, book, "BGenreGet")
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
+const getBooksByGenre = async (req, res) => {
+  try {
+
+    const genre = await mBookGenre.find({ idLiteraryGenre: req.params.id })
+    resp.makeResponsesOkData(res, genre, "BGetByGenre")
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
 module.exports = {
+  // Book CRUD
   createBook,
   getAllBooks,
   getBookById,
   updateBook,
   deleteBook,
   getBooksByUser,
+
+  // Book actions
+  setBookGenre,
+  getBookGenres,
+  getBooksByGenre
 }
