@@ -1,5 +1,5 @@
 // Book imports
-const mBook = require('../models/mBook')
+const mBook = require('../models/MBook')
 const resp = require('../utils/responses')
 
 // BookGenre imports
