@@ -3,7 +3,7 @@ const mBook = require('../models/MBook')
 const resp = require('../utils/responses')
 
 // BookGenre imports
-const mBookGenre = require('../models/mBookGenre')
+const mBookGenre = require('../models/MBookGenre')
 
 // Book CRUD
 const createBook = async (req, res) => {
