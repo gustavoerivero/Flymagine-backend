@@ -69,29 +69,29 @@ const login = async (req, res) => {
 
     if (!await mUser.findOne({ email: req.body.email })) {
       return resp.makeResponsesError(res, "ULoginError1")
-    } else if (!await validate.comparePassword(req.body.password, valUser.password)) {
-      return resp.makeResponsesError(res, "ULoginError2")
-    } else {
-
-      const token = jwt.sign({ id: valUser._id, }, "Flymagine-secret", { expiresIn: "86400" })
-
-      const user = {
-        id: valUser._id,
-        idRole: valUser.idRole,
-        firstName: valUser.firstName,
-        lastName: valUser.lastName,
-        email: valUser.email,
-        photo: valUser.photo,
-        address: valUser.address,
-        phone: valUser.phone,
-        birthday: valUser.birthday,
-        biography: valUser.biography,
-        token: token
-      }
-
-      resp.makeResponsesOkData(res, user, "Success")
-
     }
+
+    if (!await validate.comparePassword(req.body.password, valUser.password)) {
+      return resp.makeResponsesError(res, "ULoginError2")
+    }
+
+    const token = jwt.sign({ id: valUser._id, }, "Flymagine-secret", { expiresIn: "86400" })
+
+    const user = {
+      id: valUser._id,
+      idRole: valUser.idRole,
+      firstName: valUser.firstName,
+      lastName: valUser.lastName,
+      email: valUser.email,
+      photo: valUser.photo,
+      address: valUser.address,
+      phone: valUser.phone,
+      birthday: valUser.birthday,
+      biography: valUser.biography,
+      token: token
+    }
+
+    resp.makeResponsesOkData(res, user, "Success")
 
   } catch (error) {
     resp.makeResponsesException(res, error)
