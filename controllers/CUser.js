@@ -67,11 +67,17 @@ const createUser = async (req, res) => {
 const login = async (req, res) => {
   try {
 
-    if (!await mUser.findOne({ email: req.body.email })) {
+    const valUser = await mUser.findOne({
+      email: req.body.email
+    })
+
+    if (!valUser) {
       return resp.makeResponsesError(res, "ULoginError1")
     }
 
-    if (!await validate.comparePassword(req.body.password, valUser.password)) {
+    const valPass = await validate.comparePassword(req.body.password, valUser.password)
+
+    if (!valPass) {
       return resp.makeResponsesError(res, "ULoginError2")
     }
 
