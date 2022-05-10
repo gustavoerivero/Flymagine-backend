@@ -6,7 +6,7 @@ module.exports = {
     description: 'This is the documentation for the Flymagine Backend API',
     contact: {
       name: 'Flymagine',
-      url: 'https://flymagine.com',
+      url: 'https://flymagine-backend.herokuapp.com/',
       email: 'gustavoerivero12@gmail.com',
     }
   }

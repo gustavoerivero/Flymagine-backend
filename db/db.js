@@ -6,8 +6,7 @@ let url = process.env.CONNECTION_STRING.toString()
 moongose
   .connect(url)
   .then(db => {
-    console.log("DB is connected")
-    console.log(url)
+    console.log(`Database is conected on ${url}`)
   })
   .catch(err => {
     console.error(err)

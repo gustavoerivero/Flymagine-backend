@@ -20,7 +20,7 @@ app.use(express.json())
 app.use(morgan('tiny'))
 app.use(express.urlencoded({ extended: false }))
 app.use(cors())
-// app.use('/api-doc', swaggerUi.serve, swaggerUi.setup(docs))
+app.use('/api/doc', swaggerUi.serve, swaggerUi.setup(docs))
 
 // Routes
 require('./routes')(app)
@@ -28,5 +28,5 @@ require('./routes')(app)
 app.get('/', (req, res) => res.send('Connected!'))
 
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`)
+  console.log(`Server is running on ${process.env.URL}`)
 })

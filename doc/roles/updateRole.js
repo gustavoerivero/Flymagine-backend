@@ -1,11 +1,22 @@
 module.exports = {
-  post: {
+  put: {
     tags: ['Role'],
-    summary: 'Create a new role',
-    description: 'Create a new role',
-    operationId: 'createRole',
+    summary: 'Update a role by id',
+    description: 'Update a role by id',
+    operationId: 'putRole',
+    parameters: [
+      {
+        in: 'path',
+        name: 'id',
+        description: 'Role id',
+        required: true,
+        schema: {
+          type: 'string',
+        },
+      },
+    ],
     requestBody: {
-      description: 'Role to create',
+      description: 'Role to update',
       content: {
         'application/json': {
           schema: {
@@ -18,7 +29,7 @@ module.exports = {
     responses: {
       '200': {
         Ok: '1',
-        description: 'Role created',
+        description: 'Role updated',
         schema: {
           $ref: '#/schemas/Role',
         },
