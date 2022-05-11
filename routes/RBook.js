@@ -13,5 +13,6 @@ router.delete('/:id', cBook.deleteBook)
 router.post('/:id/set-genre', cBook.setBookGenre)
 router.get('/:id/genre', cBook.getBookGenres)
 router.get('/genre/:id', cBook.getBooksByGenre)
+router.delete('/:id/genre/:idGenre', cBook.deleteBookGenre)
 
 module.exports = router

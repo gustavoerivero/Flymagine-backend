@@ -191,6 +191,26 @@ const getBooksByGenre = async (req, res) => {
   }
 }
 
+const deleteBookGenre = async (req, res) => {
+  try {
+    const book = await mBook.findOne({ _id: req.params.id, status: 'A' })
+
+    if (!book) {
+      return resp.makeResponsesError(res, "BNotFound")
+    }
+
+    const deleteBGenre = await mPersonalPreference.findOneAndDelete({
+      idBook: req.params.id,
+      idLiteraryGenre: req.params.idGenre
+    })
+
+    resp.makeResponsesOkData(res, deleteBGenre, "BGenreDeleted")
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
 module.exports = {
   // Book CRUD
   createBook,
@@ -203,5 +223,6 @@ module.exports = {
   // Book actions
   setBookGenre,
   getBookGenres,
-  getBooksByGenre
+  getBooksByGenre,
+  deleteBookGenre
 }

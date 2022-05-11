@@ -7,6 +7,11 @@ const validate = require('../utils/validate')
 
 // UserBook imports
 const mUserBook = require('../models/MUserBook')
+const { get } = require('express/lib/response')
+
+// PersonalPreference imports
+const mPersonalPreference = require('../models/MPersonalPreference')
+const mReactionPost = require('../models/MReactionPost')
 
 /**
  * User CRUD
@@ -333,6 +338,103 @@ const getReadBookUsersByBook = async (req, res) => {
   }
 }
 
+const setPersonalPreference = async (req, res) => {
+  try {
+
+    const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
+
+    if (!user) {
+      return resp.makeResponsesError(res, "UNotFound")
+    } else if (await mPersonalPreference.findOne({ idUser: req.params.id, idLiteraryGenre: req.body.idLiteraryGenre })) {
+      return resp.makeResponsesError(res, "PPreferenceFound")
+    } else {
+      const personalPreference = new mPersonalPreference({
+        idUser: req.params.id,
+        idLiteraryGenre: req.body.idLiteraryGenre
+      })
+      const savePersonalPrefenreces = await personalPreference.save()
+
+      resp.makeResponsesOkData(res, savePersonalPrefenreces, "PPreferenceCreated")
+
+    }
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
+const getPersonalPreference = async (req, res) => {
+  try {
+
+    const user = await mPersonalPreference.find({ idUser: req.params.id })
+    resp.makeResponsesOkData(res, user, "PPreferenceGet")
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
+const getUserByPersonalPreference = async (req, res) => {
+  try {
+
+    const genre = await mPersonalPreference.find({ idLiteraryGenre: req.params.id })
+    resp.makeResponsesOkData(res, genre, "UGetByPersonalPreference")
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
+const deletePersonalPreference = async (req, res) => {
+  try {
+    const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
+
+    if (!user) {
+      return resp.makeResponsesError(res, "UNotFound")
+    }
+
+    const deletePPreference = await mPersonalPreference.findOneAndDelete({
+      idUser: req.params.id,
+      idLiteraryGenre: req.params.idPreference
+    })
+
+    resp.makeResponsesOkData(res, deletePPreference, "PPreferenceDelete")
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
+const setReactionPost = async (req, res) => {
+  try {
+    const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
+    if (!user) {
+      return resp.makeResponsesError(res, "UNotFound")
+    } else if (await mReactionPost.findOne({ idUser: req.params.id, idPost: req.body.idPost, reacted: true})) {
+      const saveReactionFalse = await mReactionPost.updateOne({
+        reacted: false,
+      })
+      resp.makeResponsesOkData(res, saveReactionFalse, "ReactionPostFalse")
+    }else if (await mReactionPost.findOne({ idUser: req.params.id, idPost: req.body.idPost, reacted: false})) {
+      const saveReactionTrue = await mReactionPost.updateOne({
+        reacted: true,
+      })
+      resp.makeResponsesOkData(res, saveReactionTrue, "ReactionPostTrue")
+    }  else {
+      const reaction = new mReactionPost({
+        idUser: req.params.id,
+        idPost: req.body.idPost,
+      })
+      const savePersonalPrefenreces = await reaction.save()
+
+      resp.makeResponsesOkData(res, savePersonalPrefenreces, "ReactionCreated")
+
+    }
+  }catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
 module.exports = {
   // Users
   createUser,
@@ -353,5 +455,14 @@ module.exports = {
   getFavouriteBookUsersByBook,
   getToReadBookUsersByBook,
   getReadingBookUsersByBook,
-  getReadBookUsersByBook
+  getReadBookUsersByBook,
+
+  // Preference actions
+  setPersonalPreference,
+  getPersonalPreference,
+  getUserByPersonalPreference,
+  deletePersonalPreference,
+
+  // Reactions actions
+  setReactionPost,
 }

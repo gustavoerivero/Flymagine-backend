@@ -74,5 +74,21 @@
     "HDeleted": "Hashtag deleted",
     "HNotFound": "Error, hashtag not found",
     "HVoid": "Error, not data",
-    "HFound": "Error, hashtag has been used"
+    "HFound": "Error, hashtag has been used",
+    "BGenreCreated": "Book Genre created",
+    "BGenreGet": "Book Genres",
+    "BGenreDelete": "Book Genre deleted",
+    "BGenreNotFound": "Error, book genre not found",
+    "BGenreFound": "Error, book genre has been used",
+    "BGetByGenre": "Books by genre",
+    "PPreferenceCreated": "Personal preference created",
+    "PPreferenceGet": "Personal preferences",
+    "PPreferenceDelete": "Personal preference deleted",
+    "PPreferenceNotFound": "Error, personal preference not found",
+    "PPreferenceFound": "Error, personal preference has been used",
+    "UGetByPersonalPreference": "Users by personal preference",
+    "ReactionCreated": "Reaction created",
+    "ReactionPostFalse": "Reaction false",
+    "ReactionPostTrue": "Reaction true"
+
 }

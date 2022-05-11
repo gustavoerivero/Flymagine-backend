@@ -20,7 +20,7 @@ const userSchema = Schema({
   email: {
     type: String,
     required: true,
-    maxlength: 40,
+    maxlength: 50,
     unique: true,
   },
   password: {
@@ -32,11 +32,12 @@ const userSchema = Schema({
     type: String,
     required: true,
     maxlength: 255,
+    default: 'none',
   },
   address: {
     type: String,
     required: false,
-    maxlength: 100,
+    maxlength: 255,
   },
   phone: {
     type: String,
@@ -50,7 +51,7 @@ const userSchema = Schema({
   biography: {
     type: String,
     required: false,
-    maxlength: 255,
+    maxlength: 1024,
   },
   lastConnection: {
     type: Date,
