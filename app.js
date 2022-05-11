@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const morgan = require('morgan')
 const docs = require('./doc')
+const routes = require('./routes')
 
 require('dotenv').config()
 
@@ -23,7 +24,7 @@ app.use(cors())
 app.use('/api/doc', swaggerUi.serve, swaggerUi.setup(docs))
 
 // Routes
-require('./routes')(app)
+app.use(api, routes)
 
 app.get('/', (req, res) => res.send('Connected!'))
 
