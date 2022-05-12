@@ -345,6 +345,10 @@ const getReadBookUsersByBook = async (req, res) => {
   }
 }
 
+/**
+ * Personal Preferences actions
+ */
+
 const setPersonalPreference = async (req, res) => {
   try {
 
@@ -352,12 +356,10 @@ const setPersonalPreference = async (req, res) => {
 
     if (!user) {
       return resp.makeResponsesError(res, "UNotFound")
-    } else if (await mPersonalPreference.findOne({ idUser: req.params.id, idLiteraryGenre: req.body.idLiteraryGenre })) {
-      return resp.makeResponsesError(res, "PPreferenceFound")
     } else {
       const personalPreference = new mPersonalPreference({
         idUser: req.params.id,
-        idLiteraryGenre: req.body.idLiteraryGenre
+        genres: req.body
       })
       const savePersonalPrefenreces = await personalPreference.save()
 
@@ -374,6 +376,8 @@ const getPersonalPreference = async (req, res) => {
   try {
 
     const user = await mPersonalPreference.find({ idUser: req.params.id })
+      .populate({ path: 'idUser', select: 'firstName lastName email' })
+      .populate({ path: 'genres', select: 'name' })
     resp.makeResponsesOkData(res, user, "PPreferenceGet")
 
   } catch (error) {
@@ -385,6 +389,8 @@ const getUserByPersonalPreference = async (req, res) => {
   try {
 
     const genre = await mPersonalPreference.find({ idLiteraryGenre: req.params.id })
+      .populate({ path: 'idUser', select: 'firstName lastName email' })
+      .populate({ path: 'genres', select: 'name' })
     resp.makeResponsesOkData(res, genre, "UGetByPersonalPreference")
 
   } catch (error) {
@@ -392,20 +398,31 @@ const getUserByPersonalPreference = async (req, res) => {
   }
 }
 
-const deletePersonalPreference = async (req, res) => {
+const updatePersonalPreference = async (req, res) => {
+
   try {
+
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
 
     if (!user) {
       return resp.makeResponsesError(res, "UNotFound")
+    } else {
+      const personalPreference = await mPersonalPreference.findOneAndUpdate({ idUser: req.params.id }, {
+        $set: {
+          genres: req.body
+        },
+        function(error, success) {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log(success);
+          }
+        }
+      })
+
+      resp.makeResponsesOkData(res, personalPreference, "PPreferenceUpdated")
+
     }
-
-    const deletePPreference = await mPersonalPreference.findOneAndDelete({
-      idUser: req.params.id,
-      idLiteraryGenre: req.params.idPreference
-    })
-
-    resp.makeResponsesOkData(res, deletePPreference, "PPreferenceDelete")
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -417,17 +434,17 @@ const setReactionPost = async (req, res) => {
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
     if (!user) {
       return resp.makeResponsesError(res, "UNotFound")
-    } else if (await mReactionPost.findOne({ idUser: req.params.id, idPost: req.body.idPost, reacted: true})) {
+    } else if (await mReactionPost.findOne({ idUser: req.params.id, idPost: req.body.idPost, reacted: true })) {
       const saveReactionFalse = await mReactionPost.updateOne({
         reacted: false,
       })
       resp.makeResponsesOkData(res, saveReactionFalse, "ReactionFalse")
-    }else if (await mReactionPost.findOne({ idUser: req.params.id, idPost: req.body.idPost, reacted: false})) {
+    } else if (await mReactionPost.findOne({ idUser: req.params.id, idPost: req.body.idPost, reacted: false })) {
       const saveReactionTrue = await mReactionPost.updateOne({
         reacted: true,
       })
       resp.makeResponsesOkData(res, saveReactionTrue, "ReactionTrue")
-    }  else {
+    } else {
       const reaction = new mReactionPost({
         idUser: req.params.id,
         idPost: req.body.idPost,
@@ -437,14 +454,14 @@ const setReactionPost = async (req, res) => {
       resp.makeResponsesOkData(res, savePersonalPrefenreces, "ReactionCreated")
 
     }
-  }catch (error) {
+  } catch (error) {
     resp.makeResponsesError(res, error)
   }
 }
 
 const getReactionPostUsersByPost = async (req, res) => {
   try {
-    const reactions = await mReactionPost.find({idPost: req.params.id})
+    const reactions = await mReactionPost.find({ idPost: req.params.id })
     resp.makeResponsesOkData(res, reactions, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -453,36 +470,37 @@ const getReactionPostUsersByPost = async (req, res) => {
 
 const setReactionReview = async (req, res) => {
   try {
-  const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
-  if (!user) {
-    return resp.makeResponsesError(res, "UNotFound")
-  } else if (await mReactionReview.findOne({ idUser: req.params.id, idReview: req.body.idReview, reacted: true})) {
-    const saveReactionFalse = await mReactionReview.updateOne({
-      reacted: false,
-    })
-    resp.makeResponsesOkData(res, saveReactionFalse, "ReactionFalse")
-  }else if (await mReactionReview.findOne({ idUser: req.params.id, idReview: req.body.idReview, reacted: false})) {
-    const saveReactionTrue = await mReactionReview.updateOne({
-      reacted: true,
-    })
-    resp.makeResponsesOkData(res, saveReactionTrue, "ReactionTrue")
-  }  else {
-    const reaction = new mReactionmReactionReviewPost({
-      idUser: req.params.id,
-      idReview: req.body.idReview,
-    })
-    const savePersonalPrefenreces = await reaction.save()
+    const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
+    if (!user) {
+      return resp.makeResponsesError(res, "UNotFound")
+    } else if (await mReactionReview.findOne({ idUser: req.params.id, idReview: req.body.idReview, reacted: true })) {
+      const saveReactionFalse = await mReactionReview.updateOne({
+        reacted: false,
+      })
+      resp.makeResponsesOkData(res, saveReactionFalse, "ReactionFalse")
+    } else if (await mReactionReview.findOne({ idUser: req.params.id, idReview: req.body.idReview, reacted: false })) {
+      const saveReactionTrue = await mReactionReview.updateOne({
+        reacted: true,
+      })
+      resp.makeResponsesOkData(res, saveReactionTrue, "ReactionTrue")
+    } else {
+      const reaction = new mReactionmReactionReviewPost({
+        idUser: req.params.id,
+        idReview: req.body.idReview,
+      })
+      const savePersonalPrefenreces = await reaction.save()
 
-    resp.makeResponsesOkData(res, savePersonalPrefenreces, "ReactionCreated")
+      resp.makeResponsesOkData(res, savePersonalPrefenreces, "ReactionCreated")
 
+    }
+  } catch (error) {
+    resp.makeResponsesError(res, error)
   }
-}catch (error) {
-  resp.makeResponsesError(res, error)
-}}
+}
 
 const getReactionReviewUsersByReview = async (req, res) => {
   try {
-    const reactions = await mReactionReview.find({idReview: req.params.id})
+    const reactions = await mReactionReview.find({ idReview: req.params.id })
     resp.makeResponsesOkData(res, reactions, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -517,7 +535,7 @@ module.exports = {
   setPersonalPreference,
   getPersonalPreference,
   getUserByPersonalPreference,
-  deletePersonalPreference,
+  updatePersonalPreference,
 
   // User reactions post actions
   setReactionPost,

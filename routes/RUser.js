@@ -23,10 +23,10 @@ router.get('/book/:id/reading', cUser.getReadingBookUsersByBook)
 router.get('/book/:id/read', cUser.getReadingBookUsersByBook)
 
 // Personal preference actions routes
-router.post('/:id/set-preference', cUser.setPersonalPreference)
-router.get('/:id/preference', cUser.getPersonalPreference)
-router.get('/preference/:id', cUser.getUserByPersonalPreference)
-router.delete('/:id/preference/:idPreference', cUser.deletePersonalPreference)
+router.post('/:id/preferences', cUser.setPersonalPreference)
+router.get('/:id/preferences', cUser.getPersonalPreference)
+router.get('/preferences/:id', cUser.getUserByPersonalPreference)
+router.put('/:id/preferences', cUser.updatePersonalPreference)
 
 // User reaction post actions routes
 router.post('/:id/reaction-post', cUser.setReactionPost)
