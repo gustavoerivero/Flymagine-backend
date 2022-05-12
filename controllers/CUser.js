@@ -128,6 +128,7 @@ const getAllUsers = async (req, res) => {
 const getUser = async (req, res) => {
   try {
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
+      .populate({ path: 'idRole', select: 'name' })
     resp.makeResponsesOkData(res, user, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
