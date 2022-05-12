@@ -8,4 +8,10 @@ router.get('/user/:id', cPost.getPostByUser)
 router.put('/:id', cPost.updatePost)
 router.delete('/:id', cPost.deletePost)
 
+// User tag actions routes
+router.post('/:id/tag-user', cPost.setUserTag)
+
+// Hashtag tag actions routes
+router.post('/:id/tag-hashtag', cPost.setHashtagTag)
+
 module.exports = router

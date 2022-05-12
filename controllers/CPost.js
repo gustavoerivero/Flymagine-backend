@@ -1,6 +1,12 @@
 const mPost = require('../models/MPost')
 const resp = require('../utils/responses')
 
+// UserTag imports
+const mUserTag = require('../models/MUserTag')
+
+// HashtagTag imports
+const mHashtagTag = require('../models/MPostTag')
+
 const createPost = async (req, res) => {
   try {
     const value = req.body
@@ -90,11 +96,71 @@ const deletePost = async (req, res) => {
   }
 }
 
+const setUserTag = async (req, res) => {
+  try {
+
+    const post = await mPost.findOne({ _id: req.params.id, status: 'A' })
+
+    if (!post) {
+
+      return resp.makeResponsesError(res, "PNotFound")
+
+    } else if (await mUserTag.findOne({ idPost: req.params.id, idUser: value.idUser})) {
+
+      resp.makeResponsesError(res, "TFound")
+
+    } else {
+      const userTag = new mUserTag({
+        idPost: req.params.id,
+        idUser: value.idUser,
+      })
+      const saveUserTag = await userTag.save()
+      resp.makeResponsesOkData(res, saveUserTag, "Success")
+    }
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
+const setHashtagTag = async (req, res) => {
+  try {
+
+    const post = await mPost.findOne({ _id: req.params.id, status: 'A' })
+
+    if (!post) {
+
+      return resp.makeResponsesError(res, "PNotFound")
+
+    } else if (await mHashtagTag.findOne({ idPost: req.params.id, idHashtag: value.idHashtag})) {
+
+      resp.makeResponsesError(res, "TFound")
+
+    } else {
+      const hashtagTag = new mHashtagTag({
+        idPost: req.params.id,
+        idHashtag: value.idHashtag,
+      })
+      const saveHashtagTag = await hashtagTag.save()
+      resp.makeResponsesOkData(res, saveHashtagTag, "Success")
+    }
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
 module.exports = {
   createPost,
   getAllPosts,
   getPostByUser,
   getPostById,
   updatePost,
-  deletePost
+  deletePost,
+
+  // User tag actions
+  setUserTag,
+
+  // Hashtag tag actions
+  setHashtagTag,
 }

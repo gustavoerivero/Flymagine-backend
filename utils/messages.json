@@ -88,7 +88,8 @@
     "PPreferenceFound": "Error, personal preference has been used",
     "UGetByPersonalPreference": "Users by personal preference",
     "ReactionCreated": "Reaction created",
-    "ReactionPostFalse": "Reaction false",
-    "ReactionPostTrue": "Reaction true"
+    "ReactionFalse": "Reaction false",
+    "ReactionTrue": "Reaction true",
+    "TFound": "Error, utag has been used"
 
 }
