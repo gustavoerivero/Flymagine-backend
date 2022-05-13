@@ -179,7 +179,7 @@ const setReactionPost = async (req, res) => {
 const getReactionPost = async (req, res) => {
   try {
     const reactions = await mReactionPost.find({ idPost: req.params.id })
-      .populate({ path: 'users', select: '_id email firstName lastName' })
+      .populate('users')
     resp.makeResponsesOkData(res, reactions, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
