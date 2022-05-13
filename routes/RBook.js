@@ -10,9 +10,10 @@ router.put('/:id', cBook.updateBook)
 router.delete('/:id', cBook.deleteBook)
 
 // Book genre actions routes
-router.post('/:id/set-genre', cBook.setBookGenre)
-router.get('/:id/genre', cBook.getBookGenres)
-router.get('/genre/:id', cBook.getBooksByGenre)
-router.delete('/:id/genre/:idGenre', cBook.deleteBookGenre)
+router.post('/:id/genres', cBook.setBookGenre)
+router.get('/:id/genres', cBook.getBookGenre)
+router.get('/genres/:id', cBook.getBooksByGenre)
+router.put('/:id/genres', cBook.updateBookGenre)
+router.put('/:id/genres/delete', cBook.deleteBookGenre)
 
 module.exports = router

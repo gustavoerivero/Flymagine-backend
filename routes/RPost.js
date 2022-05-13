@@ -8,6 +8,12 @@ router.get('/user/:id', cPost.getPostByUser)
 router.put('/:id', cPost.updatePost)
 router.delete('/:id', cPost.deletePost)
 
+// User reaction post actions routes
+router.post('/:id/reaction', cPost.setReactionPost)
+
+// Reaction post actions routes
+router.get('/:id/reaction', cPost.getReactionPostUsersByPost)
+
 // User tag actions routes
 router.post('/:id/tag-user', cPost.setUserTag)
 

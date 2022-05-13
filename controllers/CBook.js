@@ -151,12 +151,12 @@ const setBookGenre = async (req, res) => {
 
     if (!book) {
       return resp.makeResponsesError(res, "BNotFound")
-    } else if (await mBookGenre.findOne({ idBook: req.params.id, idLiteraryGenre: req.body.idLiteraryGenre })) {
+    } else if (await mBookGenre.findOne({ idBook: req.params.id, genres: req.body.genres })) {
       return resp.makeResponsesError(res, "BGenreFound")
     } else {
       const bookGenre = new mBookGenre({
         idBook: req.params.id,
-        idLiteraryGenre: req.body.idLiteraryGenre
+        genres: req.body
       })
       const saveBookGenre = await bookGenre.save()
 
@@ -169,10 +169,12 @@ const setBookGenre = async (req, res) => {
   }
 }
 
-const getBookGenres = async (req, res) => {
+const getBookGenre = async (req, res) => {
   try {
 
     const book = await mBookGenre.find({ idBook: req.params.id })
+      .populate({ path: 'idBook', select: 'name' })
+      .populate({ path: 'genres', select: 'name' })
     resp.makeResponsesOkData(res, book, "BGenreGet")
 
   } catch (error) {
@@ -184,7 +186,39 @@ const getBooksByGenre = async (req, res) => {
   try {
 
     const genre = await mBookGenre.find({ idLiteraryGenre: req.params.id })
+      .populate({ path: 'idBook', select: 'name' })
+      .populate({ path: 'genres', select: 'name' })
     resp.makeResponsesOkData(res, genre, "BGetByGenre")
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
+const updateBookGenre = async (req, res) => {
+  try {
+
+    const book = await mBook.findOne({ _id: req.params.id, status: 'A' })
+
+    if (!book) {
+      return resp.makeResponsesError(res, "BNotFound")
+    } else {
+      const genre = await mBookGenre.findOneAndUpdate({ idBook: req.params.id }, {
+        $set: {
+          genres: req.body
+        },
+        function(error, success) {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log(success);
+          }
+        }
+      })
+
+      resp.makeResponsesOkData(res, genre, "BGenreUpdated")
+
+    }
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -197,12 +231,20 @@ const deleteBookGenre = async (req, res) => {
 
     if (!book) {
       return resp.makeResponsesError(res, "BNotFound")
+    } else {
+      const deleteBGenre = await mBookGenre.findOneAndDelete({ idBook: req.params.id }, {
+        $set: {
+          genres: []
+        },
+        function(error, success) {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log(success);
+          }
+        }
+      })
     }
-
-    const deleteBGenre = await mPersonalPreference.findOneAndDelete({
-      idBook: req.params.id,
-      idLiteraryGenre: req.params.idGenre
-    })
 
     resp.makeResponsesOkData(res, deleteBGenre, "BGenreDeleted")
 
@@ -222,7 +264,8 @@ module.exports = {
 
   // Book actions
   setBookGenre,
-  getBookGenres,
+  getBookGenre,
   getBooksByGenre,
+  updateBookGenre,
   deleteBookGenre
 }

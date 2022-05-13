@@ -12,14 +12,6 @@ const { get } = require('express/lib/response')
 // PersonalPreference imports
 const mPersonalPreference = require('../models/MPersonalPreference')
 
-// ReactionPost imports
-const mReactionPost = require('../models/MReactionPost')
-
-// ReactionReview imports
-const mReactionReview = require('../models/MReactionReview')
-
-
-
 /**
  * User CRUD
  */
@@ -430,85 +422,36 @@ const updatePersonalPreference = async (req, res) => {
   }
 }
 
-const setReactionPost = async (req, res) => {
+const deleteAllPersonalPreference = async (req, res) => {
+
   try {
+
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
+
     if (!user) {
       return resp.makeResponsesError(res, "UNotFound")
-    } else if (await mReactionPost.findOne({ idUser: req.params.id, idPost: req.body.idPost, reacted: true })) {
-      const saveReactionFalse = await mReactionPost.updateOne({
-        reacted: false,
-      })
-      resp.makeResponsesOkData(res, saveReactionFalse, "ReactionFalse")
-    } else if (await mReactionPost.findOne({ idUser: req.params.id, idPost: req.body.idPost, reacted: false })) {
-      const saveReactionTrue = await mReactionPost.updateOne({
-        reacted: true,
-      })
-      resp.makeResponsesOkData(res, saveReactionTrue, "ReactionTrue")
     } else {
-      const reaction = new mReactionPost({
-        idUser: req.params.id,
-        idPost: req.body.idPost,
+      const personalPreference = await mPersonalPreference.findOneAndUpdate({ idUser: req.params.id }, {
+        $set: {
+          genres: []
+        },
+        function(error, success) {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log(success);
+          }
+        }
       })
-      const savePersonalPrefenreces = await reaction.save()
 
-      resp.makeResponsesOkData(res, savePersonalPrefenreces, "ReactionCreated")
+      resp.makeResponsesOkData(res, personalPreference, "PPreferenceUpdated")
 
     }
+
   } catch (error) {
     resp.makeResponsesError(res, error)
   }
 }
-
-const getReactionPostUsersByPost = async (req, res) => {
-  try {
-    const reactions = await mReactionPost.find({ idPost: req.params.id })
-    resp.makeResponsesOkData(res, reactions, "Success")
-  } catch (error) {
-    resp.makeResponsesError(res, error)
-  }
-}
-
-const setReactionReview = async (req, res) => {
-  try {
-    const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
-    if (!user) {
-      return resp.makeResponsesError(res, "UNotFound")
-    } else if (await mReactionReview.findOne({ idUser: req.params.id, idReview: req.body.idReview, reacted: true })) {
-      const saveReactionFalse = await mReactionReview.updateOne({
-        reacted: false,
-      })
-      resp.makeResponsesOkData(res, saveReactionFalse, "ReactionFalse")
-    } else if (await mReactionReview.findOne({ idUser: req.params.id, idReview: req.body.idReview, reacted: false })) {
-      const saveReactionTrue = await mReactionReview.updateOne({
-        reacted: true,
-      })
-      resp.makeResponsesOkData(res, saveReactionTrue, "ReactionTrue")
-    } else {
-      const reaction = new mReactionmReactionReviewPost({
-        idUser: req.params.id,
-        idReview: req.body.idReview,
-      })
-      const savePersonalPrefenreces = await reaction.save()
-
-      resp.makeResponsesOkData(res, savePersonalPrefenreces, "ReactionCreated")
-
-    }
-  } catch (error) {
-    resp.makeResponsesError(res, error)
-  }
-}
-
-const getReactionReviewUsersByReview = async (req, res) => {
-  try {
-    const reactions = await mReactionReview.find({ idReview: req.params.id })
-    resp.makeResponsesOkData(res, reactions, "Success")
-  } catch (error) {
-    resp.makeResponsesError(res, error)
-  }
-}
-
-
 
 module.exports = {
   // Users
@@ -537,18 +480,10 @@ module.exports = {
   getPersonalPreference,
   getUserByPersonalPreference,
   updatePersonalPreference,
+  deleteAllPersonalPreference,
 
-  // User reactions post actions
-  setReactionPost,
 
-  // Reactions post actions
-  getReactionPostUsersByPost,
 
-  // User reactions review actions
-  setReactionReview,
-
-  // Reactions review actions
-  getReactionReviewUsersByReview,
 
 
 }

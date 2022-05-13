@@ -1,6 +1,9 @@
 const mPost = require('../models/MPost')
 const resp = require('../utils/responses')
 
+// ReactionPost imports
+const mReactionPost = require('../models/MReactionPost')
+
 // UserTag imports
 const mUserTag = require('../models/MUserTag')
 
@@ -150,6 +153,41 @@ const setHashtagTag = async (req, res) => {
   }
 }
 
+const setReactionPost = async (req, res) => {
+  try {
+
+    const post = await mPost.findOne({ _id: req.params.id, status: 'A' })
+
+    if (!post) {
+      return resp.makeResponsesError(res, "PNotFound")
+    } else {
+      const reactionPost = new mReactionPost({
+        idPost: req.params.id,
+        users: req.body
+      })
+      const saveReactionPost = await reactionPost.save()
+
+      resp.makeResponsesOkData(res, saveReactionPost, "ReactionCreated")
+
+    }
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
+
+const getReactionPostUsersByPost = async (req, res) => {
+  try {
+    const reactions = await mReactionPost.find({ idPost: req.params.id })
+    .populate({ path: 'idPost', select: '_id' })
+      .populate({ path: 'users', select: 'firstName lastName' })
+    resp.makeResponsesOkData(res, reactions, "Success")
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
 module.exports = {
   createPost,
   getAllPosts,
@@ -157,6 +195,12 @@ module.exports = {
   getPostById,
   updatePost,
   deletePost,
+
+  // User reactions post actions
+  setReactionPost,
+
+  // Reactions post actions
+  getReactionPostUsersByPost,
 
   // User tag actions
   setUserTag,

@@ -2,20 +2,15 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const reactionReviewSchema = new Schema({
-  idUser: {
+  users: [{
     type: Schema.Types.ObjectId,
     ref: 'MUser',
-    required: true,
-  },
+    required: ['Es necesario que ingrese el id de usuario'],
+  }],
   idReview: {
     type: Schema.Types.ObjectId,
     ref: 'MReview',
-    required: true,
-  },
-  reacted:{
-    type: Boolean,
-    default: true,
-    required: true,
+    required: ['Es necesario que ingrese el id de review'],
   }
 }, { timestamps: true })
 

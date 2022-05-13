@@ -5,13 +5,14 @@ const bookGenreSchema = new Schema({
   idBook: {
     type: Schema.Types.ObjectId,
     ref: 'MBook',
-    required: true,
+    required: ['Es necesario que ingrese el id de libro'],
+    unique: true
   },
-  idLiteraryGenre: {
+  genres: [{
     type: Schema.Types.ObjectId,
     ref: 'MLiteraryGenre',
-    required: true,
-  },
+    required: ['Es necesario el id del género literario'],
+  }]
 }, { timestamps: true })
 
 module.exports = mongoose.model('MBookGenre', bookGenreSchema)

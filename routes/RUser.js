@@ -27,19 +27,7 @@ router.post('/:id/preferences', cUser.setPersonalPreference)
 router.get('/:id/preferences', cUser.getPersonalPreference)
 router.get('/preferences/:id', cUser.getUserByPersonalPreference)
 router.put('/:id/preferences', cUser.updatePersonalPreference)
-
-// User reaction post actions routes
-router.post('/:id/reaction-post', cUser.setReactionPost)
-
-// Reaction post actions routes
-router.get('/post/:id/reaction', cUser.getReactionPostUsersByPost)
-
-// User reaction post actions routes
-router.post('/:id/reaction-post', cUser.setReactionPost)
-
-// Reaction post actions routes
-router.get('/post/:id/reaction', cUser.getReactionPostUsersByPost)
-
+router.put('/:id/preferences/delete', cUser.deleteAllPersonalPreference)
 
 
 module.exports = router
