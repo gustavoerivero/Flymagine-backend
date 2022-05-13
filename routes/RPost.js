@@ -11,7 +11,6 @@ router.delete('/:id', cPost.deletePost)
 // Reaction to post actions
 router.post('/:id/reaction', cPost.setReactionPost)
 router.get('/:id/reaction', cPost.getReactionPost)
-router.put('/:id/reaction', cPost.updateReactionPost)
 
 // User tag actions routes
 router.post('/:id/tag-user', cPost.setUserTag)

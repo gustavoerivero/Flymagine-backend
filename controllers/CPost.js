@@ -160,6 +160,14 @@ const setReactionPost = async (req, res) => {
 
     if (!post) {
       return resp.makeResponsesError(res, "PNotFound")
+    } else if (await mReactionPost.findOne({ idPost: req.params.id })) {
+      const updateReaction = await mReactionPost.findOneAndUpdate({ idPost: req.params.id }, {
+        $set: {
+          users: req.body
+        }
+      })
+      resp.makeResponsesOkData(res, updateReaction, "Success")
+
     } else {
       const reactionPost = new mReactionPost({
         idPost: req.params.id,
@@ -186,28 +194,6 @@ const getReactionPost = async (req, res) => {
   }
 }
 
-const updateReactionPost = async (req, res) => {
-
-  try {
-
-    if (await mReactionPost.findOne({ idPost: req.params.id })) {
-      const updateReaction = await mReactionPost.findOneAndUpdate({ idPost: req.params.id }, {
-        $set: {
-          users: req.body
-        }
-      })
-
-      resp.makeResponsesOkData(res, updateReaction, "ReactionUpdated")
-    } else {
-      resp.makeResponsesError(res, "ReactionNotFound")
-    }
-
-  } catch (error) {
-    resp.makeResponsesError(res, error)
-  }
-
-}
-
 module.exports = {
   createPost,
   getAllPosts,
@@ -219,7 +205,6 @@ module.exports = {
   // Reaction Post actions
   setReactionPost,
   getReactionPost,
-  updateReactionPost,
 
   // User tag actions
   setUserTag,
