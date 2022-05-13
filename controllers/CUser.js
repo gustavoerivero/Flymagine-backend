@@ -5,9 +5,11 @@ const mUser = require('../models/MUser')
 const resp = require('../utils/responses')
 const validate = require('../utils/validate')
 
+// Follows imports
+const mFollows = require('../models/MFollows')
+
 // UserBook imports
 const mUserBook = require('../models/MUserBook')
-const { get } = require('express/lib/response')
 
 // PersonalPreference imports
 const mPersonalPreference = require('../models/MPersonalPreference')
@@ -181,6 +183,113 @@ const deleteUser = async (req, res) => {
     resp.makeResponsesError(res, error)
   }
 }
+
+/**
+ * 
+ * UserFollows actions
+ */
+
+const setFollowUser = async (req, res) => {
+  try {
+
+    const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
+
+    if (!user) {
+      return resp.makeResponsesError(res, "UNotFound")
+    } else if (!await mFollows.findOne({ idUser: req.params.id })) {
+      return resp.makeResponsesError(res, "UNotFound")
+    } else {
+
+      const saveFollow = await mFollows.findOneAndUpdate({
+        idUser: req.params.id
+      }, {
+        $set: {
+          follows: req.body
+        }
+      })
+
+      resp.makeResponsesOkData(res, saveFollow, "Success")
+
+    }
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
+const getFollows = async (req, res) => {
+  try {
+
+    const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
+
+    if (!user) {
+      return resp.makeResponsesError(res, "UNotFound")
+    } else if (!await mFollows.findOne({ idUser: req.params.id })) {
+      return resp.makeResponsesError(res, "UNotFound")
+    } else {
+
+      const follows = await mFollows.findOne({ idUser: req.params.id })
+
+      resp.makeResponsesOkData(res, follows, "Success")
+
+    }
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
+const getFollowers = async (req, res) => {
+  try {
+
+    const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
+
+    if (!user) {
+      return resp.makeResponsesError(res, "UNotFound")
+    } else if (!await mFollows.findOne({ idUser: req.params.id })) {
+      return resp.makeResponsesError(res, "UNotFound")
+    } else {
+
+      const followers = await mFollows.findOne({ idUser: req.params.id })
+
+      resp.makeResponsesOkData(res, followers, "Success")
+
+    }
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
+const updateFollows = async (req, res) => {
+  try {
+
+    const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
+
+    if (!user) {
+      return resp.makeResponsesError(res, "UNotFound")
+    } else if (!await mFollows.findOne({ idUser: req.params.id })) {
+      return resp.makeResponsesError(res, "UNotFound")
+    } else {
+
+      const saveFollow = await mFollows.findOneAndUpdate({
+        idUser: req.params.id
+      }, {
+        $set: {
+          follows: req.body
+        }
+      })
+
+      resp.makeResponsesOkData(res, saveFollow, "Success")
+
+    }
+
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
 
 /**
  * Actions for books
@@ -461,6 +570,12 @@ module.exports = {
   getUser,
   updateUser,
   deleteUser,
+
+  // Follows actions
+  setFollowUser,
+  getFollows,
+  getFollowers,
+  updateFollows,
 
   // Actions for books
   setUserBook,

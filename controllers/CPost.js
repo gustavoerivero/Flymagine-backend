@@ -108,7 +108,7 @@ const setUserTag = async (req, res) => {
 
       return resp.makeResponsesError(res, "PNotFound")
 
-    } else if (await mUserTag.findOne({ idPost: req.params.id, idUser: value.idUser})) {
+    } else if (await mUserTag.findOne({ idPost: req.params.id, idUser: value.idUser })) {
 
       resp.makeResponsesError(res, "TFound")
 
@@ -135,7 +135,7 @@ const setHashtagTag = async (req, res) => {
 
       return resp.makeResponsesError(res, "PNotFound")
 
-    } else if (await mHashtagTag.findOne({ idPost: req.params.id, idHashtag: value.idHashtag})) {
+    } else if (await mHashtagTag.findOne({ idPost: req.params.id, idHashtag: value.idHashtag })) {
 
       resp.makeResponsesError(res, "TFound")
 
@@ -176,16 +176,36 @@ const setReactionPost = async (req, res) => {
   }
 }
 
-
-const getReactionPostUsersByPost = async (req, res) => {
+const getReactionPost = async (req, res) => {
   try {
     const reactions = await mReactionPost.find({ idPost: req.params.id })
-    .populate({ path: 'idPost', select: '_id' })
-      .populate({ path: 'users', select: 'firstName lastName' })
+      .populate({ path: 'users', select: '_id email firstName lastName' })
     resp.makeResponsesOkData(res, reactions, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
   }
+}
+
+const updateReactionPost = async (req, res) => {
+
+  try {
+
+    if (await mReactionPost.findOne({ idPost: req.params.id })) {
+      const updateReaction = await mReactionPost.findOneAndUpdate({ idPost: req.params.id }, {
+        $set: {
+          users: req.body
+        }
+      })
+
+      resp.makeResponsesOkData(res, updateReaction, "ReactionUpdated")
+    } else {
+      resp.makeResponsesError(res, "ReactionNotFound")
+    }
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+
 }
 
 module.exports = {
@@ -196,11 +216,10 @@ module.exports = {
   updatePost,
   deletePost,
 
-  // User reactions post actions
+  // Reaction Post actions
   setReactionPost,
-
-  // Reactions post actions
-  getReactionPostUsersByPost,
+  getReactionPost,
+  updateReactionPost,
 
   // User tag actions
   setUserTag,

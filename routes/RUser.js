@@ -9,6 +9,12 @@ router.get('/:id', cUser.getUser)
 router.put('/:id', cUser.updateUser)
 router.delete('/:id', cUser.deleteUser)
 
+// Follows actions routes
+router.post('/:id/follows', cUser.setFollowUser)
+router.get('/:id/follows', cUser.getFollows)
+router.get('/:id/followers', cUser.getFollowers)
+router.put('/:id/follows', cUser.updateFollows)
+
 // User book actions routes
 router.post('/:id/set-book', cUser.setUserBook)
 router.get('/:id/favourite', cUser.getFavouritesBooksByUser)
