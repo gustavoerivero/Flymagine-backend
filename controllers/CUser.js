@@ -129,6 +129,15 @@ const getUser = async (req, res) => {
   }
 }
 
+const getOnlyUser = async (req, res) => {
+  try {
+    const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
+    resp.makeResponsesOkData(res, user, "Success")
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
 const updateUser = async (req, res) => {
   try {
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
@@ -568,6 +577,7 @@ module.exports = {
   login,
   getAllUsers,
   getUser,
+  getOnlyUser,
   updateUser,
   deleteUser,
 
