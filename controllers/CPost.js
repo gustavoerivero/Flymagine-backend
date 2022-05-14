@@ -182,6 +182,14 @@ const setReactionPost = async (req, res) => {
 
     if (!post) {
       return resp.makeResponsesError(res, "PNotFound")
+    } else if (await mReactionPost.findOne({ idPost: req.params.id })) {
+      const updateReaction = await mReactionPost.findOneAndUpdate({ idPost: req.params.id }, {
+        $set: {
+          users: req.body
+        }
+      })
+      resp.makeResponsesOkData(res, updateReaction, "Success")
+
     } else {
       const reactionPost = new mReactionPost({
         idPost: req.params.id,
@@ -198,12 +206,10 @@ const setReactionPost = async (req, res) => {
   }
 }
 
-
-const getReactionPostUsersByPost = async (req, res) => {
+const getReactionPost = async (req, res) => {
   try {
     const reactions = await mReactionPost.find({ idPost: req.params.id })
-    .populate({ path: 'idPost', select: '_id' })
-      .populate({ path: 'users', select: 'firstName lastName' })
+      .populate('users')
     resp.makeResponsesOkData(res, reactions, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -220,11 +226,9 @@ module.exports = {
   updatePost,
   deletePost,
 
-  // User reactions post actions
+  // Reaction Post actions
   setReactionPost,
-
-  // Reactions post actions
-  getReactionPostUsersByPost,
+  getReactionPost,
 
   // User tag actions
   setUserTag,

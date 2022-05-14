@@ -6,8 +6,15 @@ router.post('/', cUser.createUser)
 router.post('/login', cUser.login)
 router.get('/', cUser.getAllUsers)
 router.get('/:id', cUser.getUser)
+router.get('/:id/only', cUser.getOnlyUser)
 router.put('/:id', cUser.updateUser)
 router.delete('/:id', cUser.deleteUser)
+
+// Follows actions routes
+router.post('/:id/follows', cUser.setFollowUser)
+router.get('/:id/follows', cUser.getFollows)
+router.get('/:id/followers', cUser.getFollowers)
+router.put('/:id/follows', cUser.updateFollows)
 
 // User book actions routes
 router.post('/:id/set-book', cUser.setUserBook)
