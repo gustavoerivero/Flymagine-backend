@@ -26,7 +26,6 @@ router.get('/book/:id/read', cUser.getReadingBookUsersByBook)
 router.post('/:id/preferences', cUser.setPersonalPreference)
 router.get('/:id/preferences', cUser.getPersonalPreference)
 router.get('/preferences/:id', cUser.getUserByPersonalPreference)
-router.put('/:id/preferences', cUser.updatePersonalPreference)
 router.put('/:id/preferences/delete', cUser.deleteAllPersonalPreference)
 
 

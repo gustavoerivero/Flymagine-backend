@@ -2,11 +2,11 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const userTagSchema = new Schema({
-  idUser: {
+  users: [{
     type: Schema.Types.ObjectId,
     ref: 'MUser',
     required: true,
-  },
+  }],
   idPost: {
     type: Schema.Types.ObjectId,
     ref: 'MPost',

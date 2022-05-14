@@ -108,19 +108,30 @@ const setUserTag = async (req, res) => {
 
       return resp.makeResponsesError(res, "PNotFound")
 
-    } else if (await mUserTag.findOne({ idPost: req.params.id, idUser: value.idUser})) {
+    } else if (await mUserTag.findOne({ idPost: req.params.id, users: value.users})) {
 
       resp.makeResponsesError(res, "TFound")
 
     } else {
       const userTag = new mUserTag({
         idPost: req.params.id,
-        idUser: value.idUser,
+        users: value.users,
       })
       const saveUserTag = await userTag.save()
       resp.makeResponsesOkData(res, saveUserTag, "Success")
     }
 
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
+const getUserTagByPost = async (req, res) => {
+  try {
+    const reactions = await mReactionPost.find({ idPost: req.params.id })
+    .populate({ path: 'idPost', select: '_id' })
+    .populate({ path: 'users', select: 'firstName lastName' })
+    resp.makeResponsesOkData(res, reactions, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
   }
@@ -135,19 +146,30 @@ const setHashtagTag = async (req, res) => {
 
       return resp.makeResponsesError(res, "PNotFound")
 
-    } else if (await mHashtagTag.findOne({ idPost: req.params.id, idHashtag: value.idHashtag})) {
+    } else if (await mHashtagTag.findOne({ idPost: req.params.id, hashtags: value.hashtags})) {
 
       resp.makeResponsesError(res, "TFound")
 
     } else {
       const hashtagTag = new mHashtagTag({
         idPost: req.params.id,
-        idHashtag: value.idHashtag,
+        hashtags: value.hashtags,
       })
       const saveHashtagTag = await hashtagTag.save()
       resp.makeResponsesOkData(res, saveHashtagTag, "Success")
     }
 
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
+const getHashtagTagByPost = async (req, res) => {
+  try {
+    const reactions = await mReactionPost.find({ idPost: req.params.id })
+    .populate({ path: 'idPost', select: '_id' })
+    .populate({ path: 'hashtags', select: 'name' })
+    resp.makeResponsesOkData(res, reactions, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
   }
@@ -188,6 +210,8 @@ const getReactionPostUsersByPost = async (req, res) => {
   }
 }
 
+
+
 module.exports = {
   createPost,
   getAllPosts,
@@ -204,7 +228,9 @@ module.exports = {
 
   // User tag actions
   setUserTag,
+  getUserTagByPost,
 
   // Hashtag tag actions
   setHashtagTag,
+  getHashtagTagByPost,
 }

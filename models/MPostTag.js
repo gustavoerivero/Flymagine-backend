@@ -2,11 +2,11 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const postTagSchema = new Schema({
-  idHashtag: {
+  hashtags: [{
     type: Schema.Types.ObjectId,
     ref: 'MHashtag',
     required: true,
-  },
+  }],
   idPost: {
     type: Schema.Types.ObjectId,
     ref: 'MPost',

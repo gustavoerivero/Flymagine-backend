@@ -349,7 +349,26 @@ const setPersonalPreference = async (req, res) => {
 
     if (!user) {
       return resp.makeResponsesError(res, "UNotFound")
-    } else {
+    }
+    else if (await mPersonalPreference.findOne({ idUser: req.params.id })){
+      const personalPreference = await mPersonalPreference.updateOne({ idUser: req.params.id }, {
+        $set: {
+          genres: req.body
+        },
+        function(error, success) {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log(success);
+          }
+        }
+      })
+
+      resp.makeResponsesOkData(res, personalPreference, "PPreferenceUpdated")
+
+    }
+
+    else {
       const personalPreference = new mPersonalPreference({
         idUser: req.params.id,
         genres: req.body
@@ -385,37 +404,6 @@ const getUserByPersonalPreference = async (req, res) => {
       .populate({ path: 'idUser', select: 'firstName lastName email' })
       .populate({ path: 'genres', select: 'name' })
     resp.makeResponsesOkData(res, genre, "UGetByPersonalPreference")
-
-  } catch (error) {
-    resp.makeResponsesError(res, error)
-  }
-}
-
-const updatePersonalPreference = async (req, res) => {
-
-  try {
-
-    const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
-
-    if (!user) {
-      return resp.makeResponsesError(res, "UNotFound")
-    } else {
-      const personalPreference = await mPersonalPreference.findOneAndUpdate({ idUser: req.params.id }, {
-        $set: {
-          genres: req.body
-        },
-        function(error, success) {
-          if (error) {
-            console.log(error);
-          } else {
-            console.log(success);
-          }
-        }
-      })
-
-      resp.makeResponsesOkData(res, personalPreference, "PPreferenceUpdated")
-
-    }
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -479,7 +467,6 @@ module.exports = {
   setPersonalPreference,
   getPersonalPreference,
   getUserByPersonalPreference,
-  updatePersonalPreference,
   deleteAllPersonalPreference,
 
 
