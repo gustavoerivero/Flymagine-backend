@@ -473,9 +473,7 @@ const setPersonalPreference = async (req, res) => {
 
       resp.makeResponsesOkData(res, personalPreference, "PPreferenceUpdated")
 
-    }
-
-    else {
+    } else {
       const personalPreference = new mPersonalPreference({
         idUser: req.params.id,
         genres: req.body
@@ -496,7 +494,7 @@ const getPersonalPreference = async (req, res) => {
 
     const user = await mPersonalPreference.find({ idUser: req.params.id })
       .populate({ path: 'idUser', select: 'firstName lastName email' })
-      .populate({ path: 'genres', select: 'name' })
+      .populate('genres')
     resp.makeResponsesOkData(res, user, "PPreferenceGet")
 
   } catch (error) {
@@ -582,9 +580,5 @@ module.exports = {
   getPersonalPreference,
   getUserByPersonalPreference,
   deleteAllPersonalPreference,
-
-
-
-
 
 }
