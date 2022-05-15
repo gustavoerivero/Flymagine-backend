@@ -141,18 +141,7 @@ const getOnlyUser = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
-    const data = {
-      idRole: req.body.idRole,
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      email: req.body.email,
-      password: bcrypt.hashSync(req.body.password),
-      photo: req.body.photo,
-      address: req.body.address,
-      phone: req.body.phone,
-      biography: req.body.biography,
-      birthday: req.body.birthday
-    }
+    const data = req.body
 
     if (!user) {
       return resp.makeResponsesError(res, "UNotFound")
