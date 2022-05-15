@@ -7,16 +7,13 @@ const photoPostSchema = new Schema({
     ref: 'MPost',
     required: true
   },
-  photo: {
-    type: String,
-    required: true,
-    maxlength: 255
-  },
-  deleteAt: {
-    type: Date,
-    required: false,
-    default: null
-  }
+  photos: [
+    {
+      type: String,
+      required: true,
+      maxlength: 1024,
+    },
+  ],
 }, { timestamps: true })
 
 module.exports = mongoose.model('MPhotoPost', photoPostSchema)

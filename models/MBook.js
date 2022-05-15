@@ -20,12 +20,12 @@ const bookSchema = new Schema({
   photo: {
     type: String,
     required: true,
-    maxlength: 255,
+    maxlength: 1024,
   },
   document: {
     type: String,
     required: true,
-    maxlength: 255,
+    maxlength: 1024,
   },
   postDate: {
     type: Date,

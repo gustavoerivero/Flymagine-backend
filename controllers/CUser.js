@@ -138,6 +138,37 @@ const getOnlyUser = async (req, res) => {
   }
 }
 
+const uploadProfileImage = async (req, res) => {  
+  try {
+
+    if (!await mUser.findOne({ _id: req.params.id, status: 'A' })) {
+      return resp.makeResponsesError(res, "UNotFound")
+    }
+
+    const file = req?.file
+    if (!file) {
+      return resp.makeResponsesError(res, "UImageError")
+    }
+
+    const filename = file?.filename
+    const basePath = `${req.protocol}://${req.get('host')}/public/images/`
+
+    const saveUser = await mUser.findOneAndUpdate({
+      _id: req.params.id,
+      status: 'A'
+    }, {
+      $set: {
+        photo: `${basePath}${filename}`
+      }
+    })
+
+    resp.makeResponsesOkData(res, saveUser, "UUpdated")
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
 const updateUser = async (req, res) => {
   try {
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
@@ -554,6 +585,7 @@ module.exports = {
   getUser,
   getOnlyUser,
   updateUser,
+  uploadProfileImage,
   deleteUser,
 
   // Follows actions

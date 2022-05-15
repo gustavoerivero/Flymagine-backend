@@ -31,7 +31,7 @@ const userSchema = Schema({
   photo: {
     type: String,
     required: true,
-    maxlength: 255,
+    maxlength: 1024,
     default: 'none',
   },
   address: {

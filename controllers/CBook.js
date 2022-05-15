@@ -84,6 +84,68 @@ const getBookById = async (req, res) => {
   }
 }
 
+const uploadImage = async (req, res) => {  
+  try {
+
+    if (!await mBook.findOne({ _id: req.params.id, status: 'A' })) {
+      return resp.makeResponsesError(res, "UNotFound")
+    }
+
+    const file = req?.file
+    if (!file) {
+      return resp.makeResponsesError(res, "UImageError")
+    }
+
+    const filename = file?.filename
+    const basePath = `${req.protocol}://${req.get('host')}/public/images/`
+
+    const saveUser = await mBook.findOneAndUpdate({
+      _id: req.params.id,
+      status: 'A'
+    }, {
+      $set: {
+        photo: `${basePath}${filename}`
+      }
+    })
+
+    resp.makeResponsesOkData(res, saveUser, "UUpdated")
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
+const uploadDocument = async (req, res) => {  
+  try {
+
+    if (!await mBook.findOne({ _id: req.params.id, status: 'A' })) {
+      return resp.makeResponsesError(res, "BNotFound")
+    }
+
+    const file = req?.file
+    if (!file) {
+      return resp.makeResponsesError(res, "UDocumentError")
+    }
+
+    const filename = file?.filename
+    const basePath = `${req.protocol}://${req.get('host')}/public/docs/`
+ 
+    const saveUser = await mBook.findOneAndUpdate({
+      _id: req.params.id,
+      status: 'A'
+    }, {
+      $set: {
+        document: `${basePath}${filename}`
+      }
+    })
+
+    resp.makeResponsesOkData(res, saveUser, "UUpdated")
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
 const updateBook = async (req, res) => {
   try {
 
@@ -248,6 +310,8 @@ module.exports = {
   getAllBooks,
   getBookById,
   updateBook,
+  uploadImage,
+  uploadDocument,
   deleteBook,
   getBooksByUser,
 

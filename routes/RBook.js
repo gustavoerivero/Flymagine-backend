@@ -1,5 +1,6 @@
 const router = require('express').Router()
 const cBook = require('../controllers/CBook')
+const { imageUpload, docUpload } = require('../utils/multer')
 
 // Book actions routes
 router.post('/', cBook.createBook)
@@ -7,6 +8,8 @@ router.get('/', cBook.getAllBooks)
 router.get('/:id', cBook.getBookById)
 router.get('/user/:id', cBook.getBooksByUser)
 router.put('/:id', cBook.updateBook)
+router.post('/:id/image', imageUpload.single('photo'), cBook.uploadImage)
+router.post('/:id/document', docUpload.single('document'), cBook.uploadDocument)
 router.delete('/:id', cBook.deleteBook)
 
 // Book genre actions routes

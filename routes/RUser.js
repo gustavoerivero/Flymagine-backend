@@ -1,8 +1,10 @@
 const router = require('express').Router()
 const cUser = require('../controllers/CUser')
+const { imageUpload } = require('../utils/multer')
 
 // User actions routes
 router.post('/', cUser.createUser)
+router.post('/:id/image', imageUpload.single('photo'), cUser.uploadProfileImage)
 router.post('/login', cUser.login)
 router.get('/', cUser.getAllUsers)
 router.get('/:id', cUser.getUser)
