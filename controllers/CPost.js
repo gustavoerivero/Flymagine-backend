@@ -71,7 +71,8 @@ const getFeedPosts = async (req, res) => {
   const posts = await mPost.find({
     idUser: {
       $in: req.body
-    }
+    },
+    status: 'A'
   })
   resp.makeResponsesOkData(res, posts, "PGetPosts")
 
