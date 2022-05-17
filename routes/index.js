@@ -10,7 +10,6 @@ router.use('/literary-genre', require('./RLiteraryGenre'))
 router.use('/review', require('./RReview'))
 router.use('/comment-review', require('./RCommentReview'))
 router.use('/post', require('./RPost'))
-router.use('/photo-post', require('./RPhotoPost'))
 router.use('/comment-post', require('./RCommentPost'))
 router.use('/hashtag', require('./RHashtag'))
 

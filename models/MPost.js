@@ -10,12 +10,13 @@ const postSchema = new Schema({
   description: {
     type: String,
     required: true,
-    maxlength: 255
+    maxlength: 1024
   },
-  postDate: {
-    type: Date,
-    default: Date.now,
-    required: true
+  photo: {
+    type: String,
+    required: true,
+    maxlength: 1024,
+    default: 'none',
   },
   status: {
     type: String,

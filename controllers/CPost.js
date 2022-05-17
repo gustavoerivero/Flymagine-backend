@@ -1,5 +1,7 @@
 const mPost = require('../models/MPost')
 const resp = require('../utils/responses')
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
 
 // ReactionPost imports
 const mReactionPost = require('../models/MReactionPost')
@@ -64,6 +66,54 @@ const getPostById = async (req, res) => {
   }
 }
 
+const getFeedPosts = async (req, res) => {
+  
+  const posts = await mPost.find({
+    idUser: {
+      $in: req.body
+    }
+  })
+  resp.makeResponsesOkData(res, posts, "PGetPosts")
+
+  try {
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+
+}
+
+const uploadImage = async (req, res) => {
+  try {
+
+    if (!await mPost.findOne({ _id: req.params.id, status: 'A' })) {
+      return resp.makeResponsesError(res, "UNotFound")
+    }
+
+    const file = req?.file
+    if (!file) {
+      return resp.makeResponsesError(res, "UImageError")
+    }
+
+    const filename = file?.filename
+    const basePath = `${req.protocol}://${req.get('host')}/public/images/`
+
+    const savePost = await mPost.findOneAndUpdate({
+      _id: req.params.id,
+      status: 'A'
+    }, {
+      $set: {
+        photo: `${basePath}${filename}`
+      }
+    })
+
+    resp.makeResponsesOkData(res, savePost, "PUpdated")
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
 const updatePost = async (req, res) => {
   try {
 
@@ -108,7 +158,7 @@ const setUserTag = async (req, res) => {
 
       return resp.makeResponsesError(res, "PNotFound")
 
-    } else if (await mUserTag.findOne({ idPost: req.params.id, users: value.users})) {
+    } else if (await mUserTag.findOne({ idPost: req.params.id, users: value.users })) {
 
       resp.makeResponsesError(res, "TFound")
 
@@ -129,8 +179,8 @@ const setUserTag = async (req, res) => {
 const getUserTagByPost = async (req, res) => {
   try {
     const reactions = await mReactionPost.find({ idPost: req.params.id })
-    .populate({ path: 'idPost', select: '_id' })
-    .populate({ path: 'users', select: 'firstName lastName' })
+      .populate({ path: 'idPost', select: '_id' })
+      .populate({ path: 'users', select: 'firstName lastName' })
     resp.makeResponsesOkData(res, reactions, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -146,7 +196,7 @@ const setHashtagTag = async (req, res) => {
 
       return resp.makeResponsesError(res, "PNotFound")
 
-    } else if (await mHashtagTag.findOne({ idPost: req.params.id, hashtags: value.hashtags})) {
+    } else if (await mHashtagTag.findOne({ idPost: req.params.id, hashtags: value.hashtags })) {
 
       resp.makeResponsesError(res, "TFound")
 
@@ -167,8 +217,8 @@ const setHashtagTag = async (req, res) => {
 const getHashtagTagByPost = async (req, res) => {
   try {
     const reactions = await mReactionPost.find({ idPost: req.params.id })
-    .populate({ path: 'idPost', select: '_id' })
-    .populate({ path: 'hashtags', select: 'name' })
+      .populate({ path: 'idPost', select: '_id' })
+      .populate({ path: 'hashtags', select: 'name' })
     resp.makeResponsesOkData(res, reactions, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -216,13 +266,13 @@ const getReactionPost = async (req, res) => {
   }
 }
 
-
-
 module.exports = {
   createPost,
   getAllPosts,
   getPostByUser,
   getPostById,
+  getFeedPosts,
+  uploadImage,
   updatePost,
   deletePost,
 

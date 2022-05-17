@@ -17,7 +17,6 @@ router.delete('/:id', cUser.deleteUser)
 router.post('/:id/follows', cUser.setFollowUser)
 router.get('/:id/follows', cUser.getFollows)
 router.get('/:id/followers', cUser.getFollowers)
-router.put('/:id/follows', cUser.updateFollows)
 
 // User book actions routes
 router.post('/:id/set-book', cUser.setUserBook)

@@ -48,6 +48,7 @@
     "PGetAll": "Posts",
     "PGetById": "Post",
     "PGetByUser": "Posts by user",
+    "PGetPosts": "Get many posts",
     "PUpdated": "Post updated",
     "PDeleted": "Post deleted",
     "PNotFound": "Error, post not found",

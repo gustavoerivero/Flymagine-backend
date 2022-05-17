@@ -5,6 +5,8 @@ router.post('/', cPost.createPost)
 router.get('/', cPost.getAllPosts)
 router.get('/:id', cPost.getPostById)
 router.get('/user/:id', cPost.getPostByUser)
+router.post('/feed', cPost.getFeedPosts)
+router.post('/:id/image', cPost.uploadImage)
 router.put('/:id', cPost.updatePost)
 router.delete('/:id', cPost.deletePost)
 
