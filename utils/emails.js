@@ -1,21 +1,22 @@
 const nodemailer = require('nodemailer')
+const html = require('./assets/PasswordResetHTML')
+require('dotenv').config()
 
 let transporter = nodemailer.createTransport({
-  host: 'smtp.mailtrap.io',
-  port: 2525,
+  host: 'smtp.gmail.com',
+  port: 587,
   auth: {
-    user: "9fde3a32ccf7e5",
-    pass: "a6793056274f41"
+    user: process.env.USER,
+    pass: process.env.PASS
   }
 })
 
 function sendEmail(email, password) {
   message = {
-    from: "admin@flymagine.com",
+    from: `"Soporte Flymagine" <${process.env.USER}>`,
     to: email,
-    subject: "Subject",
-    html: "<h1>Holi, haciendo pruebas del correo</h1>"
-      + `<h2>Esta es tu nueva contrasena ${password}</h2>`
+    subject: "¡Hey! Hemos recibido una solicitud de restablecimiento de contraseña. - Flymagine",
+    html: html(password)
   }
   transporter.sendMail(message, (err, info) => {
     if (err) return err

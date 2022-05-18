@@ -217,25 +217,31 @@ const deleteUser = async (req, res) => {
 
 const restoredPassword = async (req, res) => {
   try {
-    // const user = await mUser.findOne({ email: req.params.email, status: 'A' })
+    const user = await mUser.findOne({ email: req.params.email, status: 'A' })
 
-    // if (!user) {
-    //   return resp.makeResponsesError(res, "UNotFound")
-    // }
+    if (!user) {
+      return resp.makeResponsesError(res, "UNotFound")
+    }
 
-    var newPassword = generator.generate({
-      length: 10,
-      numbers: true
+    let newPassword = generator.generate({
+      length: 9,
+      numbers: true,
+      lowercase: true,
+      uppercase: true,
+    }) + '12*'
+
+    const updateUser = await mUser.findOneAndUpdate({
+      email: req.params.email,
+      status: 'A'
+    }, {
+      $set: {
+        password: bcrypt.hashSync(newPassword)
+      }
     })
-
-    // user.password = bcrypt.hashSync(newPassword)
-    // const saveUser = await mUser.findByIdAndUpdate(req.params.id, user)
 
     let _resp = emails.sendEmail(req.params.email, newPassword)
 
-    resp.makeResponsesOkData(res, _resp, "Success")
-    // console.log(req.params.email)
-    // resp.makeResponsesOkData(res, req.params.email, "Success")
+    resp.makeResponsesOkData(res, updateUser, "Success")
 
   } catch (error) {
     resp.makeResponsesError(res, error)
