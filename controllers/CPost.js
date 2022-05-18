@@ -10,7 +10,7 @@ const mReactionPost = require('../models/MReactionPost')
 const mUserTag = require('../models/MUserTag')
 
 // HashtagTag imports
-const mHashtagTag = require('../models/MPostTag')
+const mPostTag = require('../models/MPostTag')
 
 const createPost = async (req, res) => {
   try {
@@ -205,18 +205,18 @@ const setHashtagTag = async (req, res) => {
 
       return resp.makeResponsesError(res, "PNotFound")
 
-    } else if (await mHashtagTag.findOne({ idPost: req.params.id })) {
+    } else if (await mPostTag.findOne({ idPost: req.params.id })) {
 
-      const updatePostTags = await mHashtagTag.findOneAndUpdate({ idPost: req.params.id }, {
+      const updatePostTags = await mPostTag.findOneAndUpdate({ idPost: req.params.id }, {
         $set: {
-          hashtags: res.body
+          hashtags: req.body
         }
       })
 
       resp.makeResponsesOkData(res, updatePostTags, "Success")
 
     } else {
-      const hashtagTag = new mHashtagTag({
+      const hashtagTag = new mPostTag({
         idPost: req.params.id,
         hashtags: req.body,
       })
@@ -231,7 +231,7 @@ const setHashtagTag = async (req, res) => {
 
 const getHashtagTagByPost = async (req, res) => {
   try {
-    const reactions = await mHashtagTag.find({ idPost: req.params.id })
+    const reactions = await mPostTag.find({ idPost: req.params.id })
       .populate({ path: 'hashtags' })
     resp.makeResponsesOkData(res, reactions, "Success")
   } catch (error) {
