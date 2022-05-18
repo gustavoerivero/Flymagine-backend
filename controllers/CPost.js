@@ -205,14 +205,14 @@ const setHashtagTag = async (req, res) => {
 
       return resp.makeResponsesError(res, "PNotFound")
 
-    } else if (await mHashtagTag.findOne({ idPost: req.params.id, hashtags: value.hashtags })) {
+    } else if (await mHashtagTag.findOne({ idPost: req.params.id, hashtags: req.body })) {
 
       resp.makeResponsesError(res, "TFound")
 
     } else {
       const hashtagTag = new mHashtagTag({
         idPost: req.params.id,
-        hashtags: value.hashtags,
+        hashtags: req.body,
       })
       const saveHashtagTag = await hashtagTag.save()
       resp.makeResponsesOkData(res, saveHashtagTag, "Success")
