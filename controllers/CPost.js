@@ -205,9 +205,15 @@ const setHashtagTag = async (req, res) => {
 
       return resp.makeResponsesError(res, "PNotFound")
 
-    } else if (await mHashtagTag.findOne({ idPost: req.params.id, hashtags: req.body })) {
+    } else if (await mHashtagTag.findOne({ idPost: req.params.id })) {
 
-      resp.makeResponsesError(res, "TFound")
+      const updatePostTags = await mHashtagTag.findOneAndUpdate({ idPost: req.params.id }, {
+        $set: {
+          hashtags: res.body
+        }
+      })
+
+      resp.makeResponsesOkData(res, updatePostTags, "Success")
 
     } else {
       const hashtagTag = new mHashtagTag({
