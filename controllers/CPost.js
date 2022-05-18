@@ -150,6 +150,10 @@ const deletePost = async (req, res) => {
   }
 }
 
+/**
+ * User tags
+ */
+
 const setUserTag = async (req, res) => {
   try {
 
@@ -187,6 +191,10 @@ const getUserTagByPost = async (req, res) => {
     resp.makeResponsesError(res, error)
   }
 }
+
+/**
+ * Hastags
+ */
 
 const setHashtagTag = async (req, res) => {
   try {
