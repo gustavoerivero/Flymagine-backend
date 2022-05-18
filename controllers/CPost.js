@@ -225,7 +225,7 @@ const setHashtagTag = async (req, res) => {
 
 const getHashtagTagByPost = async (req, res) => {
   try {
-    const reactions = await mReactionPost.find({ idPost: req.params.id })
+    const reactions = await mHashtagTag.find({ idPost: req.params.id })
       .populate({ path: 'idPost', select: '_id' })
       .populate({ path: 'hashtags', select: 'name' })
     resp.makeResponsesOkData(res, reactions, "Success")
