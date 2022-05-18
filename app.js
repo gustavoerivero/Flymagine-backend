@@ -22,6 +22,7 @@ app.use(morgan('tiny'))
 app.use(express.urlencoded({ extended: false }))
 
 app.use('/public/images', express.static(__dirname + '/public/images'))
+app.use('/public/images', express.static(__dirname + '/public/images'))
 app.use('/public/docs', express.static(__dirname + '/public/docs'))
 
 app.use(cors())
