@@ -21,6 +21,6 @@ router.get('/:id/tag-user', cPost.getUserTagByPost)
 
 // Hashtag tag actions routes
 router.post('/:id/hashtag', cPost.setHashtagTag)
-router.get('/:id/hastag', cPost.getHashtagTagByPost)
+router.get('/:id/hashtag', cPost.getHashtagTagByPost)
 
 module.exports = router
