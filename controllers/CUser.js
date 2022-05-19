@@ -191,6 +191,48 @@ const updateUser = async (req, res) => {
   }
 }
 
+const changePassword = async (req, res) => {
+  try {
+
+    const valUser = await mUser.findOne({
+      _id: req.params.id,
+      email: req.body.email,
+      status: 'A'
+    })
+
+    if (!valUser) {
+      return resp.makeResponsesError(res, "UNotFound")
+    }
+
+    const valPass = await validate.comparePassword(req.body.password, valUser.password)
+
+    if (!valPass) {
+      return resp.makeResponsesError(res, "UChangePasswordError")
+    }
+    
+    const valNewPass = await validate.comparePassword(req.body.newPassword, valUser.password)
+
+    if (valNewPass) {
+      return resp.makeResponsesError(res, "UChangePasswordError1")
+    }
+
+    const saveUser = await mUser.findOneAndUpdate({
+      _id: valUser._id,
+      status: 'A'
+    }, {
+      $set: {
+        password: bcrypt.hashSync(req.body.newPassword)
+      }
+    })
+
+    resp.makeResponsesOkData(res, saveUser, "UChangePasswordSuccess")
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+    console.log('error', error)
+  }
+}
+
 const deleteUser = async (req, res) => {
   try {
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
@@ -593,6 +635,7 @@ module.exports = {
   getUser,
   getOnlyUser,
   updateUser,
+  changePassword,
   uploadProfileImage,
   deleteUser,
   restoredPassword,
