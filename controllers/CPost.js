@@ -163,14 +163,20 @@ const setUserTag = async (req, res) => {
 
       return resp.makeResponsesError(res, "PNotFound")
 
-    } else if (await mUserTag.findOne({ idPost: req.params.id, users: value.users })) {
+    } else if (await mUserTag.findOne({ idPost: req.params.id })) {
 
-      resp.makeResponsesError(res, "TFound")
+      const updateUserTag = await mUserTag.findOneAndUpdate({ idPost: req.params.id }, {
+        $set: {
+          users: req.body
+        }
+      })
+
+      resp.makeResponsesOkData(res, updateUserTag, "Success")
 
     } else {
       const userTag = new mUserTag({
         idPost: req.params.id,
-        users: value.users,
+        users: req.body,
       })
       const saveUserTag = await userTag.save()
       resp.makeResponsesOkData(res, saveUserTag, "Success")
@@ -184,8 +190,7 @@ const setUserTag = async (req, res) => {
 const getUserTagByPost = async (req, res) => {
   try {
     const reactions = await mReactionPost.find({ idPost: req.params.id })
-      .populate({ path: 'idPost', select: '_id' })
-      .populate({ path: 'users', select: 'firstName lastName' })
+      .populate({ path: 'users' })
     resp.makeResponsesOkData(res, reactions, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
