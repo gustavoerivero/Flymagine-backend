@@ -16,8 +16,8 @@ router.post('/:id/reaction', cPost.setReactionPost)
 router.get('/:id/reaction', cPost.getReactionPost)
 
 // User tag actions routes
-router.post('/:id/tag-user', cPost.setUserTag)
-router.get('/:id/tag-user', cPost.getUserTagByPost)
+router.post('/:id/usertag', cPost.setUserTag)
+router.get('/:id/usertag', cPost.getUserTagByPost)
 
 // Hashtag tag actions routes
 router.post('/:id/hashtag', cPost.setHashtagTag)
