@@ -11,7 +11,7 @@ router.post('/:id/password', cUser.changePassword)
 router.get('/', cUser.getAllUsers)
 router.get('/:id', cUser.getUser)
 router.get('/:id/only', cUser.getOnlyUser)
-router.get('/search/:name', cUser.getFilterUsers)
+router.get('/search/:search', cUser.getFilterUsers)
 router.put('/:id', cUser.updateUser)
 router.delete('/:id', cUser.deleteUser)
 

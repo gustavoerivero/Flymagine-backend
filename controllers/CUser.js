@@ -52,6 +52,7 @@ const createUser = async (req, res) => {
         idRole: value.idRole,
         firstName: value.firstName,
         lastName: value.lastName,
+        fullName: value.firstName + ' ' + value.lastName,
         email: value.email,
         password: bcrypt.hashSync(value.password),
         photo: value.photo,
@@ -142,8 +143,15 @@ const getOnlyUser = async (req, res) => {
 
 const getFilterUsers = async (req, res) => {
   try {
-    const users = await mUser.find({ firstName: req.params.name, status: 'A' })
+
+    const users = await mUser.find({
+      $or: [
+        { fullName: { $regex: req.params.search } },
+      ],
+      status: 'A'
+    })
       .populate({ path: 'idRole', select: 'name' })
+      .limit(10)
     resp.makeResponsesOkData(res, users, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -190,7 +198,16 @@ const updateUser = async (req, res) => {
       return resp.makeResponsesError(res, "UNotFound")
     } else {
 
-      const saveUser = await mUser.findByIdAndUpdate(req.params.id, data)
+      const saveUser = await mUser.findByIdAndUpdate(req.params.id, {
+        $set: {
+          firstName: data.firstName,
+          lastName: data.lastName,
+          fullName: data.firstName + ' ' + data.lastName,
+          phone: data.phone,
+          address: data.address,
+          biography: data.biography,
+        }
+      })
 
       resp.makeResponsesOkData(res, saveUser, "UUpdated")
 
@@ -219,7 +236,7 @@ const changePassword = async (req, res) => {
     if (!valPass) {
       return resp.makeResponsesError(res, "UChangePasswordError")
     }
-    
+
     const valNewPass = await validate.comparePassword(req.body.newPassword, valUser.password)
 
     if (valNewPass) {
@@ -348,12 +365,12 @@ const getFollows = async (req, res) => {
     if (!user) {
       return resp.makeResponsesError(res, "UNotFound")
     } else if (!await mFollows.findOne({ idUser: req.params.id })) {
-      
+
       const follows = await mFollows.create({
         idUser: req.params.id,
         follows: []
       })
-      
+
       const saveFollows = follows.save()
 
       resp.makeResponsesOkData(res, saveFollows, "Success")
