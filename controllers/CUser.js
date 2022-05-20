@@ -97,6 +97,7 @@ const login = async (req, res) => {
       idRole: valUser.idRole,
       firstName: valUser.firstName,
       lastName: valUser.lastName,
+      fullName: valUser.fullName,
       email: valUser.email,
       photo: valUser.photo,
       address: valUser.address,
@@ -198,16 +199,9 @@ const updateUser = async (req, res) => {
       return resp.makeResponsesError(res, "UNotFound")
     } else {
 
-      const saveUser = await mUser.findByIdAndUpdate(req.params.id, {
-        $set: {
-          firstName: data.firstName,
-          lastName: data.lastName,
-          fullName: data.firstName + ' ' + data.lastName,
-          phone: data.phone,
-          address: data.address,
-          biography: data.biography,
-        }
-      })
+      data = mapUpdateUser(data, user)
+
+      const saveUser = await mUser.findByIdAndUpdate(req.params.id, data)
 
       resp.makeResponsesOkData(res, saveUser, "UUpdated")
 
@@ -216,6 +210,18 @@ const updateUser = async (req, res) => {
   } catch (error) {
     resp.makeResponsesError(res, error)
   }
+}
+
+const mapUpdateUser = (data, user) => {
+  data.fullName = data.firstName + ' ' + data.lastName
+
+  const valPass = await validate.comparePassword(data.password, user.password)
+
+  if (!valPass) {
+    data.password = bcrypt.hashSync(data.password)
+  }
+
+  return data
 }
 
 const changePassword = async (req, res) => {
