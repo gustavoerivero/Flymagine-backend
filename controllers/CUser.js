@@ -376,7 +376,7 @@ const getFollows = async (req, res) => {
 const getFollowers = async (req, res) => {
   try {
     const followers = await mFollows.find({
-      users: req.params.id,
+      follows: req.params.id,
       idUser: {
         $nin: req.params.id
       }
