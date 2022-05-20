@@ -215,10 +215,11 @@ const updateUser = async (req, res) => {
 const mapUpdateUser = (data, user) => {
   data.fullName = data.firstName + ' ' + data.lastName
 
-  const valPass = await validate.comparePassword(data.password, user.password)
-
-  if (!valPass) {
-    data.password = bcrypt.hashSync(data.password)
+  if (data.password != "") {
+    const valPass = await validate.comparePassword(data.password, user.password)
+    if (!valPass) {
+      data.password = bcrypt.hashSync(data.password)
+    } 
   }
 
   return data
