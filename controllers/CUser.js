@@ -140,6 +140,16 @@ const getOnlyUser = async (req, res) => {
   }
 }
 
+const getFilterUsers = async (req, res) => {
+  try {
+    const users = await mUser.find({ firstName: req.params.name, status: 'A' })
+      .populate({ path: 'idRole', select: 'name' })
+    resp.makeResponsesOkData(res, users, "Success")
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
 const uploadProfileImage = async (req, res) => {
   try {
 
@@ -338,7 +348,16 @@ const getFollows = async (req, res) => {
     if (!user) {
       return resp.makeResponsesError(res, "UNotFound")
     } else if (!await mFollows.findOne({ idUser: req.params.id })) {
-      return resp.makeResponsesError(res, "UNotFound")
+      
+      const follows = await mFollows.create({
+        idUser: req.params.id,
+        follows: []
+      })
+      
+      const saveFollows = follows.save()
+
+      resp.makeResponsesOkData(res, saveFollows, "Success")
+
     } else {
 
       const follows = await mFollows.findOne({ idUser: req.params.id })
@@ -634,6 +653,7 @@ module.exports = {
   getAllUsers,
   getUser,
   getOnlyUser,
+  getFilterUsers,
   updateUser,
   changePassword,
   uploadProfileImage,
