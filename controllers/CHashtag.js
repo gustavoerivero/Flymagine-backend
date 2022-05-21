@@ -63,6 +63,22 @@ const getHashtagById = async (req, res) => {
   }
 }
 
+const searchHashtag = async (req, res) => {
+  try {
+
+    const hashtag = await mHashtag.find({
+      name: {
+        $regex: req.params.search
+      }, status: 'A'
+    })
+      .limit(10)
+    resp.makeResponsesOkData(res, hashtag, "HGetByName")
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
 const updateHashtag = async (req, res) => {
   try {
     const id = req.params.id
@@ -111,6 +127,7 @@ module.exports = {
   getAllHashtags,
   getHashtagByName,
   getHashtagById,
+  searchHashtag,
   updateHashtag,
   deleteHashtag,
 }
