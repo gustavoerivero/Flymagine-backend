@@ -193,13 +193,14 @@ const uploadProfileImage = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
-    const data = req.body
+    let data = req.body
 
     if (!user) {
       return resp.makeResponsesError(res, "UNotFound")
     } else {
 
       data = mapUpdateUser(data, user)
+      console.log(data)
 
       const saveUser = await mUser.findByIdAndUpdate(req.params.id, data)
 
@@ -222,8 +223,11 @@ const mapUpdateUser = async (data, user) => {
 
   try {
 
-    if (data?.firstName != "" && data?.lastName != "")
-      data.fullName = data.firstName + ' ' + data.lastName
+    if (data?.firstName != "" || data?.lastName != "") {
+      let firstName = data.firstName ? data.firstName : user.firstName
+      let lastName = data.lastName ? data.lastName : user.lastName
+      data.fullName = firstName + ' ' + lastName
+    }
 
     if (data?.password && data?.password != "")
       data.password = await validate.comparePassword(data.password, user.password)
