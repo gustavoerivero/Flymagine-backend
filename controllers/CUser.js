@@ -219,10 +219,10 @@ const updateUser = async (req, res) => {
  * @returns {JSON} data 
  */
 const mapUpdateUser = async (data, user) => {
-  if (data.firstName != "" && data.lastName != "")
+  if (data?.firstName != "" && data?.lastName != "")
     data.fullName = data.firstName + ' ' + data.lastName
   
-  if (data.password != "") {
+  if (data?.password != "") {
     const valPass = await validate.comparePassword(data.password, user.password)
     if (!valPass) {
       data.password = bcrypt.hashSync(data.password)
