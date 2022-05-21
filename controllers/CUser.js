@@ -193,22 +193,34 @@ const uploadProfileImage = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
-    let data = req.body
 
     if (!user) {
       return resp.makeResponsesError(res, "UNotFound")
     } else {
 
-      data = mapUpdateUser(data, user)
-      console.log(data)
+      let firstName = req.body.firstName ? req.body.firstName : user.firstName
+      let lastName = req.body.lastName ? req.body.lastName : user.lastName
+      let fullName = firstName + ' ' + lastName
 
-      const saveUser = await mUser.findByIdAndUpdate(req.params.id, data)
+      const saveUser = await mUser.findOneAndUpdate({ _id: req.params.id, status: 'A' }, {
+        $set: {
+          firstName: firstName,
+          lastName: lastName,
+          fullName: fullName,
+          address: req.body.address ? data.address : req.body.address,
+          phone: req.body.phone ? req.body.phone : user.phone,
+          biography: req.body.biography ? req.body.biography : user.biography,
+        }
+      })
 
       resp.makeResponsesOkData(res, saveUser, "UUpdated")
 
     }
 
   } catch (error) {
+
+    console.log(error)
+    console.log('this is a error')
     resp.makeResponsesError(res, error)
   }
 }
