@@ -212,6 +212,12 @@ const updateUser = async (req, res) => {
   }
 }
 
+/**
+ * Method that map the data to update the user
+ * @param {JSON} data 
+ * @param {mUser} user 
+ * @returns {JSON} data 
+ */
 const mapUpdateUser = (data, user) => {
   if (data.firstName != "" && data.lastName != "")
     data.fullName = data.firstName + ' ' + data.lastName
