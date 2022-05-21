@@ -218,7 +218,7 @@ const updateUser = async (req, res) => {
  * @param {mUser} user 
  * @returns {JSON} data 
  */
-const mapUpdateUser = (data, user) => {
+const mapUpdateUser = async (data, user) => {
   if (data.firstName != "" && data.lastName != "")
     data.fullName = data.firstName + ' ' + data.lastName
   
