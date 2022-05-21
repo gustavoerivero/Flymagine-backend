@@ -224,10 +224,12 @@ const mapUpdateUser = async (data, user) => {
 
     if (data?.firstName != "" && data?.lastName != "")
       data.fullName = data.firstName + ' ' + data.lastName
-
-    if (data?.password && data?.password != "")
-      data.password = await validate.comparePassword(data.password, user.password)
-
+      
+/**
+ * if (data?.password && data?.password != "")
+ *     data.password = await validate.comparePassword(data.password, user.password)
+ */
+    
     return data
 
   } catch (error) {
