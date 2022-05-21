@@ -225,33 +225,6 @@ const updateUser = async (req, res) => {
   }
 }
 
-/**
- * Method that map the data to update the user
- * @param {JSON} data 
- * @param {mUser} user 
- * @returns {JSON} data 
- */
-const mapUpdateUser = async (data, user) => {
-
-  try {
-
-    if (data?.firstName != "" || data?.lastName != "") {
-      let firstName = data.firstName ? data.firstName : user.firstName
-      let lastName = data.lastName ? data.lastName : user.lastName
-      data.fullName = firstName + ' ' + lastName
-    }
-
-    if (data?.password && data?.password != "")
-      data.password = await validate.comparePassword(data.password, user.password)
-
-    return data
-
-  } catch (error) {
-    console.log(error)
-  }
-
-}
-
 const changePassword = async (req, res) => {
   try {
 
