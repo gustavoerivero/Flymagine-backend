@@ -207,7 +207,7 @@ const updateUser = async (req, res) => {
           firstName: firstName,
           lastName: lastName,
           fullName: fullName,
-          address: req.body.address ? data.address : req.body.address,
+          address: req.body.address ? req.body.address : user.address,
           phone: req.body.phone ? req.body.phone : user.phone,
           biography: req.body.biography ? req.body.biography : user.biography,
         }
