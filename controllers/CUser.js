@@ -221,7 +221,7 @@ const updateUser = async (req, res) => {
 
     console.log(error)
     console.log('this is a error')
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesException(res, error)
   }
 }
 
