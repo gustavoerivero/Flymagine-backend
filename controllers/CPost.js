@@ -161,15 +161,21 @@ const setUserTag = async (req, res) => {
 
     if (!post) {
 
+      console.log("Post not found")
+
       return resp.makeResponsesError(res, "PNotFound")
 
     } else if (await mUserTag.findOne({ idPost: req.params.id })) {
+
+      console.log('UserTag already exists')
 
       const updateUserTag = await mUserTag.findOneAndUpdate({ idPost: req.params.id }, {
         $set: {
           users: req.body
         }
       })
+
+      console.log(updateUserTag)
 
       resp.makeResponsesOkData(res, updateUserTag, "Success")
 
@@ -189,9 +195,9 @@ const setUserTag = async (req, res) => {
 
 const getUserTagByPost = async (req, res) => {
   try {
-    const reactions = await mReactionPost.find({ idPost: req.params.id })
+    const usertags = await mUserTag.find({ idPost: req.params.id })
       .populate({ path: 'users' })
-    resp.makeResponsesOkData(res, reactions, "Success")
+    resp.makeResponsesOkData(res, usertags, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
   }
