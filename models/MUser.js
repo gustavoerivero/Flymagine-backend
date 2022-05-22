@@ -17,6 +17,11 @@ const userSchema = Schema({
     required: true,
     maxlength: 40,
   },
+  fullName: {
+    type: String,
+    required: true,
+    maxlength: 90,
+  },
   email: {
     type: String,
     required: true,

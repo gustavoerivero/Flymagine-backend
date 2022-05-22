@@ -8,6 +8,7 @@ const createCommentPost = async (req, res) => {
       idPost: value.idPost,
       idUser: value.idUser,
       description: value.description,
+      usersLiked: [],
     })
 
     const saveCommentPost = await commentPost.save()
@@ -67,9 +68,7 @@ const updateCommentPost = async (req, res) => {
     }
 
     const saveCommentPost = await mCommentPost.findOneAndUpdate({ _id: req.params.id, status: 'A' }, {
-      $set: {
-        description: value.description,
-      }
+      $set: req.body
     })
 
     resp.makeResponsesOkData(res, saveCommentPost, "CPUpdated")

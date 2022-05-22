@@ -55,6 +55,7 @@ const createUser = async (req, res) => {
         idRole: value.idRole,
         firstName: value.firstName,
         lastName: value.lastName,
+        fullName: value.firstName + ' ' + value.lastName,
         email: value.email,
         password: bcrypt.hashSync(value.password),
         photo: value.photo,
@@ -99,6 +100,7 @@ const login = async (req, res) => {
       idRole: valUser.idRole,
       firstName: valUser.firstName,
       lastName: valUser.lastName,
+      fullName: valUser.fullName,
       email: valUser.email,
       photo: valUser.photo,
       address: valUser.address,
@@ -143,6 +145,23 @@ const getOnlyUser = async (req, res) => {
   }
 }
 
+const getFilterUsers = async (req, res) => {
+  try {
+
+    const users = await mUser.find({
+      $or: [
+        { fullName: { $regex: req.params.search } },
+      ],
+      status: 'A'
+    })
+      .populate({ path: 'idRole', select: 'name' })
+      .limit(10)
+    resp.makeResponsesOkData(res, users, "Success")
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
 const uploadProfileImage = async (req, res) => {
   try {
 
@@ -177,20 +196,77 @@ const uploadProfileImage = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
-    const data = req.body
 
     if (!user) {
       return resp.makeResponsesError(res, "UNotFound")
     } else {
 
-      const saveUser = await mUser.findByIdAndUpdate(req.params.id, data)
+      let firstName = req.body.firstName ? req.body.firstName : user.firstName
+      let lastName = req.body.lastName ? req.body.lastName : user.lastName
+      let fullName = firstName + ' ' + lastName
+
+      const saveUser = await mUser.findOneAndUpdate({ _id: req.params.id, status: 'A' }, {
+        $set: {
+          firstName: firstName,
+          lastName: lastName,
+          fullName: fullName,
+          address: req.body.address ? req.body.address : user.address,
+          phone: req.body.phone ? req.body.phone : user.phone,
+          biography: req.body.biography ? req.body.biography : user.biography,
+        }
+      })
 
       resp.makeResponsesOkData(res, saveUser, "UUpdated")
 
     }
 
   } catch (error) {
+
+    console.log(error)
+    console.log('this is a error')
+    resp.makeResponsesException(res, error)
+  }
+}
+
+const changePassword = async (req, res) => {
+  try {
+
+    const valUser = await mUser.findOne({
+      _id: req.params.id,
+      email: req.body.email,
+      status: 'A'
+    })
+
+    if (!valUser) {
+      return resp.makeResponsesError(res, "UNotFound")
+    }
+
+    const valPass = await validate.comparePassword(req.body.password, valUser.password)
+
+    if (!valPass) {
+      return resp.makeResponsesError(res, "UChangePasswordError")
+    }
+
+    const valNewPass = await validate.comparePassword(req.body.newPassword, valUser.password)
+
+    if (valNewPass) {
+      return resp.makeResponsesError(res, "UChangePasswordError1")
+    }
+
+    const saveUser = await mUser.findOneAndUpdate({
+      _id: valUser._id,
+      status: 'A'
+    }, {
+      $set: {
+        password: bcrypt.hashSync(req.body.newPassword)
+      }
+    })
+
+    resp.makeResponsesOkData(res, saveUser, "UChangePasswordSuccess")
+
+  } catch (error) {
     resp.makeResponsesError(res, error)
+    console.log('error', error)
   }
 }
 
@@ -299,7 +375,16 @@ const getFollows = async (req, res) => {
     if (!user) {
       return resp.makeResponsesError(res, "UNotFound")
     } else if (!await mFollows.findOne({ idUser: req.params.id })) {
-      return resp.makeResponsesError(res, "UNotFound")
+
+      const follows = await mFollows.create({
+        idUser: req.params.id,
+        follows: []
+      })
+
+      const saveFollows = follows.save()
+
+      resp.makeResponsesOkData(res, saveFollows, "Success")
+
     } else {
 
       const follows = await mFollows.findOne({ idUser: req.params.id })
@@ -318,7 +403,7 @@ const getFollows = async (req, res) => {
 const getFollowers = async (req, res) => {
   try {
     const followers = await mFollows.find({
-      users: req.params.id,
+      follows: req.params.id,
       idUser: {
         $nin: req.params.id
       }
@@ -607,7 +692,9 @@ module.exports = {
   getAllUsers,
   getUser,
   getOnlyUser,
+  getFilterUsers,
   updateUser,
+  changePassword,
   uploadProfileImage,
   deleteUser,
   restoredPassword,

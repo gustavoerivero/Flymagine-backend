@@ -22,6 +22,10 @@ const commentPostSchema = new Schema({
     required: true,
     maxlength: 255
   },
+  usersLiked: [{
+    type: Schema.Types.ObjectId,
+    ref: 'MUser'
+  }],
   status: {
     type: String,
     required: true,
