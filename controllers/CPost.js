@@ -277,7 +277,7 @@ const setReactionPost = async (req, res) => {
 
 const getReactionPost = async (req, res) => {
   try {
-    const reactions = await mReactionPost.find({ idPost: req.params.id })
+    const reactions = await mReactionPost.find({ idPost: req.params.id, status: 'A' })
       .populate('users')
     resp.makeResponsesOkData(res, reactions, "Success")
   } catch (error) {

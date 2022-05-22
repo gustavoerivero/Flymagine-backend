@@ -19,17 +19,14 @@ router.get('/:id/follows', cUser.getFollows)
 router.get('/:id/followers', cUser.getFollowers)
 
 // User book actions routes
-router.post('/:id/set-book', cUser.setUserBook)
-router.get('/:id/favourite', cUser.getFavouritesBooksByUser)
-router.get('/:id/to-read', cUser.getToReadBooksByUser)
-router.get('/:id/reading', cUser.getReadingBooksByUser)
-router.get('/:id/read', cUser.getReadBooksByUser)
-
-// Book actions routes
-router.get('/book/:id/favourite', cUser.getFavouriteBookUsersByBook)
-router.get('/book/:id/to-read', cUser.getToReadBookUsersByBook)
-router.get('/book/:id/reading', cUser.getReadingBookUsersByBook)
-router.get('/book/:id/read', cUser.getReadingBookUsersByBook)
+router.post('/:id/set-book-fav', cUser.setUserBookFav)
+router.post('/:id/set-book-to-read', cUser.setUserBookToRead)
+router.post('/:id/set-book-reading', cUser.setUserBookReading)
+router.post('/:id/set-book-read', cUser.setUserBookRead)
+router.get('/:id/fav', cUser.getBooksFavByUser)
+router.get('/:id/to-read', cUser.getBooksToReadByUser)
+router.get('/:id/reading', cUser.getBooksReadingByUser)
+router.get('/:id/read', cUser.getBooksReadByUser)
 
 // Personal preference actions routes
 router.post('/:id/preferences', cUser.setPersonalPreference)
