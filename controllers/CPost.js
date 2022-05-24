@@ -1,7 +1,5 @@
 const mPost = require('../models/MPost')
 const resp = require('../utils/responses')
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
 
 // ReactionPost imports
 const mReactionPost = require('../models/MReactionPost')
@@ -33,7 +31,10 @@ const createPost = async (req, res) => {
 const getAllPosts = async (req, res) => {
   try {
 
-    const posts = await mPost.find({ status: 'A' })
+    const posts = await mPost.find({
+      status: 'A'
+    })
+      .sort({ createdAt: -1 })
 
     resp.makeResponsesOkData(res, posts, "PGetAll")
 
@@ -45,7 +46,11 @@ const getAllPosts = async (req, res) => {
 const getPostByUser = async (req, res) => {
   try {
 
-    const post = await mPost.find({ idUser: req.params.id, status: 'A' })
+    const post = await mPost.find({
+      idUser: req.params.id,
+      status: 'A'
+    })
+      .sort({ createdAt: -1 })
 
     resp.makeResponsesOkData(res, post, "PGetByUser")
 
@@ -57,7 +62,11 @@ const getPostByUser = async (req, res) => {
 const getPostById = async (req, res) => {
   try {
 
-    const post = await mPost.findOne({ _id: req.params.id, status: 'A' })
+    const post = await mPost.findOne({
+      _id: req.params.id,
+      status: 'A'
+    })
+      .sort({ createdAt: -1 })
 
     resp.makeResponsesOkData(res, post, "PGetById")
 
@@ -67,13 +76,15 @@ const getPostById = async (req, res) => {
 }
 
 const getFeedPosts = async (req, res) => {
-  
+
   const posts = await mPost.find({
     idUser: {
       $in: req.body
     },
     status: 'A'
   })
+    .sort({ createdAt: -1 })
+
   resp.makeResponsesOkData(res, posts, "PGetPosts")
 
   try {
@@ -144,6 +155,27 @@ const deletePost = async (req, res) => {
     })
 
     resp.makeResponsesOkData(res, deletePost, "PDeleted")
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
+
+const getPostByHashtags = async (req, res) => {
+  try {
+
+    const posts = await mPostTag.find({
+      hashtags: {
+        $in: req.body
+      },
+      status: 'A'
+    })
+      .populate({ path: 'hashtags' })
+      .populate({ path: 'idPost' })
+      .sort({ createdAt: -1 })
+
+    resp.makeResponsesOkData(res, posts, "PGetByHashtags")
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -300,6 +332,8 @@ module.exports = {
   uploadImage,
   updatePost,
   deletePost,
+
+  getPostByHashtags,
 
   // Reaction Post actions
   setReactionPost,
