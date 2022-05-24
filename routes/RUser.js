@@ -12,6 +12,7 @@ router.get('/', cUser.getAllUsers)
 router.get('/:id', cUser.getUser)
 router.get('/:id/only', cUser.getOnlyUser)
 router.get('/search/:search', cUser.getFilterUsers)
+router.get('/search-users/:search', cUser.getFilterUsersNoLimits)
 router.put('/:id', cUser.updateUser)
 router.delete('/:id', cUser.deleteUser)
 

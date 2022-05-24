@@ -162,6 +162,23 @@ const getFilterUsers = async (req, res) => {
   }
 }
 
+const getFilterUsersNoLimits = async (req, res) => {
+  try {
+
+    const users = await mUser.find({
+      $or: [
+        { fullName: { $regex: req.params.search } },
+      ],
+      status: 'A'
+    })
+      .populate({ path: 'idRole', select: 'name' })
+      .sort({ createdAt: -1 })
+    resp.makeResponsesOkData(res, users, "Success")
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
 const uploadProfileImage = async (req, res) => {
   try {
 
@@ -693,6 +710,7 @@ module.exports = {
   getUser,
   getOnlyUser,
   getFilterUsers,
+  getFilterUsersNoLimits,
   updateUser,
   changePassword,
   uploadProfileImage,
