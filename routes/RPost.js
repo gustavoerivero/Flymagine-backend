@@ -11,6 +11,8 @@ router.post('/:id/image', imageUpload.single('photo'), cPost.uploadImage)
 router.put('/:id', cPost.updatePost)
 router.delete('/:id', cPost.deletePost)
 
+router.post('/hashtags', cPost.getPostByHashtags)
+
 // Reaction to post actions
 router.post('/:id/reaction', cPost.setReactionPost)
 router.get('/:id/reaction', cPost.getReactionPost)

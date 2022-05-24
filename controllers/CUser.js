@@ -120,6 +120,7 @@ const login = async (req, res) => {
 const getAllUsers = async (req, res) => {
   try {
     const users = await mUser.find({ status: 'A' })
+      .sort({ createdAt: -1 })
     resp.makeResponsesOkData(res, users, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -138,7 +139,12 @@ const getUser = async (req, res) => {
 
 const getOnlyUser = async (req, res) => {
   try {
-    const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
+    const user = await mUser.findOne({
+      _id: req.params.id,
+      status: 'A'
+    })
+      .sort({ createdAt: -1 })
+
     resp.makeResponsesOkData(res, user, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -156,6 +162,8 @@ const getFilterUsers = async (req, res) => {
     })
       .populate({ path: 'idRole', select: 'name' })
       .limit(10)
+      .sort({ createdAt: -1 })
+
     resp.makeResponsesOkData(res, users, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -407,6 +415,7 @@ const getFollows = async (req, res) => {
       const follows = await mFollows.findOne({ idUser: req.params.id })
         .populate({ path: 'idUser', select: 'firstName lastName' })
         .populate({ path: 'follows' })
+        .sort({ createdAt: -1 })
 
       resp.makeResponsesOkData(res, follows, "Success")
 
@@ -426,6 +435,8 @@ const getFollowers = async (req, res) => {
       }
     })
       .populate({ path: 'idUser' })
+      .sort({ createdAt: -1 })
+
     resp.makeResponsesOkData(res, followers, 'Success')
 
   } catch (error) {
