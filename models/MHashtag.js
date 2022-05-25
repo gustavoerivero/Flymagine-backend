@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
+// This is the hashtag Schema
 const hashtagSchema = new Schema({
   name: {
     type: String,
