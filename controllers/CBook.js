@@ -64,6 +64,7 @@ const getAllBooks = async (req, res) => {
   try {
 
     const books = await mBook.find({ status: 'A' })
+    .sort({ createdAt: -1 })
 
     resp.makeResponsesOkData(res, books, "BGetAll")
 
@@ -79,6 +80,24 @@ const getBookById = async (req, res) => {
 
     resp.makeResponsesOkData(res, book, "BGetById")
 
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
+
+const getFilterBooks = async (req, res) => {
+  try {
+
+    const books = await mBook.find({
+      $or: [
+        { name: { $regex: req.params.search } },
+      ],
+      status: 'A'
+    })
+      .populate({ path: 'idUser', select: 'firstName lastName photo' })
+      .sort({ createdAt: -1 })
+    resp.makeResponsesOkData(res, books, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
   }
@@ -194,6 +213,7 @@ const getBooksByUser = async (req, res) => {
       idUser: req.params.id,
       status: 'A'
     })
+    .sort({ createdAt: -1 })
 
     resp.makeResponsesOkData(res, books, "BGetByUser")
 
@@ -309,6 +329,7 @@ module.exports = {
   createBook,
   getAllBooks,
   getBookById,
+  getFilterBooks,
   updateBook,
   uploadImage,
   uploadDocument,
