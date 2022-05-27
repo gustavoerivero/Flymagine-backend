@@ -233,10 +233,7 @@ const setBookGenre = async (req, res) => {
 
     if (!book) {
       return resp.makeResponsesError(res, "BNotFound")
-    } else if (await mBookGenre.findOne({ idBook: req.params.id, genres: req.body.genres })) {
-      return resp.makeResponsesError(res, "BGenreFound")
-    } 
-    else if (await mBookGenre.findOne({ idBook: req.params.id })){
+    } else if (await mBookGenre.findOne({ idBook: req.params.id })){
       const genre = await mBookGenre.updateOne({ idBook: req.params.id }, {
         $set: {
           genres: req.body
@@ -252,9 +249,7 @@ const setBookGenre = async (req, res) => {
 
       resp.makeResponsesOkData(res, genre, "BGenreUpdated")
 
-    }
-
-    else {
+    } else {
       const bookGenre = new mBookGenre({
         idBook: req.params.id,
         genres: req.body
