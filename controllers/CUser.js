@@ -200,7 +200,7 @@ const uploadProfileImage = async (req, res) => {
     }
 
     const filename = file?.filename
-    const basePath = `${req.protocol}://${req.get('host')}/public/images/`
+    const basePath = `${req.protocol}://${req.get('host')}/flymagine/public/images/`
 
     const saveUser = await mUser.findOneAndUpdate({
       _id: req.params.id,
