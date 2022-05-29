@@ -8,8 +8,8 @@ const createCommentReview = async (req, res) => {
     const commentReview = new mCommentReview({
       idUser: value.idUser,
       idReview: value.idReview,
-      description: value.description,
-      commentDate: value.commentDate,
+      description: value.description,      
+      usersLiked: [],
     })
 
     const saveCommentReview = await commentReview.save()
@@ -70,24 +70,18 @@ const getCommentReviewsByUser = async (req, res) => {
 
 const updateCommentReview = async (req, res) => {
   try {
-    const value = req.body
 
-    if (!await mCommentReview.findOne({ _id: req.params.id, status: 'A' })) {
+    const commentReview = await mCommentReview.findOne({ _id: req.params.id, status: 'A' })
 
+    if (!commentReview) {
       return resp.makeResponsesError(res, "CRNotFound")
-
-    } else {
-
-      const commentReview = await mCommentReview.findByIdAndUpdate(req.params.id, {
-        $set: {
-          description: value.description
-        }
-      })
-
-      resp.makeResponsesOkData(res, commentReview, "CRUpdated")
-
-
     }
+
+    const saveCommentReview = await mCommentReview.findOneAndUpdate({ _id: req.params.id, status: 'A' }, {
+      $set: req.body
+    })
+
+    resp.makeResponsesOkData(res, saveCommentReview, "CRUpdated")
 
   } catch (error) {
     resp.makeResponsesError(res, error)

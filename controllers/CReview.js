@@ -28,6 +28,7 @@ const getAllReviews = async (req, res) => {
   try {
 
     const reviews = await mReview.find({ status: 'A' })
+      .sort({ createdAt: -1 })
 
     resp.makeResponsesOkData(res, reviews, "RVGetAll")
 
@@ -52,6 +53,7 @@ const getReviewByBook = async (req, res) => {
   try {
 
     const review = await mReview.find({ idBook: req.params.id, status: 'A' })
+      .sort({ createdAt: -1 })
 
     resp.makeResponsesOkData(res, review, "RVGetByBook")
 
@@ -64,6 +66,8 @@ const getReviewByUser = async (req, res) => {
   try {
 
     const review = await mReview.find({ idUser: req.params.id, status: 'A' })
+      .populate('idBook')
+      .sort({ createdAt: -1 })
 
     resp.makeResponsesOkData(res, review, "RVGetByUser")
 
@@ -127,6 +131,14 @@ const setReactionReview = async (req, res) => {
 
     if (!review) {
       return resp.makeResponsesError(res, "RNotFound")
+    } else if (await mReactionReview.findOne({ idReview: req.params.id })) {
+      const updateReaction = await mReactionReview.findOneAndUpdate({ idReview: req.params.id }, {
+        $set: {
+          users: req.body
+        }
+      })
+      resp.makeResponsesOkData(res, updateReaction, "Success")
+
     } else {
       const reactionReview = new mReactionReview({
         idReview: req.params.id,
@@ -143,9 +155,9 @@ const setReactionReview = async (req, res) => {
   }
 }
 
-const getReactionReviewUsersByReview = async (req, res) => {
+const getReactionReview = async (req, res) => {
   try {
-    const reactions = await mReactionPost.find({ idPost: req.params.id })
+    const reactions = await mReactionReview.find({ idReview: req.params.id })
       .populate({ path: 'idReview', select: '_id' })
       .populate({ path: 'users', select: 'firstName lastName' })
     resp.makeResponsesOkData(res, reactions, "Success")
@@ -165,7 +177,5 @@ module.exports = {
 
   // User reactions review actions
   setReactionReview,
-
-  // Reactions review actions
-  getReactionReviewUsersByReview,
+  getReactionReview,
 }

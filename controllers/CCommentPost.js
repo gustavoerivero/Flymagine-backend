@@ -59,8 +59,6 @@ const getCommentPostByUser = async (req, res) => {
 const updateCommentPost = async (req, res) => {
   try {
 
-    const value = req.body
-
     const commentPost = await mCommentPost.findOne({ _id: req.params.id, status: 'A' })
 
     if (!commentPost) {

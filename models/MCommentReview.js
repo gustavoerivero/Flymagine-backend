@@ -22,6 +22,10 @@ const commentReviewSchema = new Schema({
     default: Date.now,
     required: true,
   },
+  usersLiked: [{
+    type: Schema.Types.ObjectId,
+    ref: 'MUser'
+  }],
   status: {
     type: String,
     default: 'A', // A = Active, I = Inactive
