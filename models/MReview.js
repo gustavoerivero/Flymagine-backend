@@ -15,7 +15,7 @@ const reviewSchema = new Schema({
   description: {
     type: String,
     required: true,
-    maxlength: 255,
+    maxlength: 1024,
   },
   reviewDate: {
     type: Date,
