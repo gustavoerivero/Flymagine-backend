@@ -575,6 +575,8 @@ const getBooksFavByUser = async (req, res) => {
   try {
     const reactions = await mUserBookFav.find({ idUser: req.params.id, status: 'A' })
       .populate('booksFav')
+      .populate('idUser')
+      .sort({ createdAt: -1 })
     resp.makeResponsesOkData(res, reactions, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -585,6 +587,8 @@ const getBooksToReadByUser = async (req, res) => {
   try {
     const reactions = await mUserBookToRead.find({ idUser: req.params.id, status: 'A' })
       .populate('booksToRead')
+      .populate('idUser')
+      .sort({ createdAt: -1 })
     resp.makeResponsesOkData(res, reactions, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -595,6 +599,8 @@ const getBooksReadingByUser = async (req, res) => {
   try {
     const reactions = await mUserBookReading.find({ idUser: req.params.id, status: 'A' })
       .populate('booksReading')
+      .populate('idUser')
+      .sort({ createdAt: -1 })
     resp.makeResponsesOkData(res, reactions, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -605,6 +611,8 @@ const getBooksReadByUser = async (req, res) => {
   try {
     const reactions = await mUserBookRead.find({ idUser: req.params.id, status: 'A' })
       .populate('booksRead')
+      .populate('idUser')
+      .sort({ createdAt: -1 })
     resp.makeResponsesOkData(res, reactions, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
