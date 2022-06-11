@@ -27,7 +27,7 @@ app.use('/flymagine/public/images', express.static(__dirname + '/public/images')
 app.use('/flymagine/public/docs', express.static(__dirname + '/public/docs'))
 
 app.use(cors())
-app.use('/api/doc', swaggerUi.serve, swaggerUi.setup(docs))
+app.use('/flymagine/api/doc', swaggerUi.serve, swaggerUi.setup(docs))
 
 // Routes
 app.use(url_api, routes)

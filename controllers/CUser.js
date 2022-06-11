@@ -345,7 +345,8 @@ const restoredPassword = async (req, res) => {
 
     let _resp = emails.sendEmail(req.params.email, newPassword)
 
-    resp.makeResponsesOkData(res, updateUser, "Success")
+    console.log(_resp)
+    resp.makeResponsesOkData(res, updateUser, "UChangePasswordSuccess")
 
   } catch (error) {
     resp.makeResponsesError(res, error)

@@ -11,7 +11,7 @@
     "UloginError2": "Error, incorrect password",
     "UChangePasswordError": "Error, incorrect password",
     "UChangePasswordError1": "Error, the old password and new password are the same",
-    "UChangePasswordSuccess": "Password changed",
+    "UChangePasswordSuccess": "User password changed",
     "RCreated": "Role created",
     "RUpdated": "Role updated",
     "RDeleted": "Role deleted",
