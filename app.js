@@ -3,6 +3,7 @@ const cors = require('cors')
 const morgan = require('morgan')
 const docs = require('./doc')
 const routes = require('./routes')
+const auth = require('./config/auth')
 
 require('dotenv').config()
 
@@ -22,6 +23,11 @@ const app = express()
 app.use(express.json())
 app.use(morgan('tiny'))
 app.use(express.urlencoded({ extended: false }))
+app.use(auth.authJwt())
+
+app.use((err, req, res, next) => {
+  auth.errorHandler(err, req, res, next)
+})
 
 app.use('/flymagine/public/images', express.static(__dirname + '/public/images'))
 app.use('/flymagine/public/docs', express.static(__dirname + '/public/docs'))

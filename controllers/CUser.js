@@ -19,6 +19,9 @@ const mUserBookRead = require('../models/MUserBookRead')
 // PersonalPreference imports
 const mPersonalPreference = require('../models/MPersonalPreference')
 
+// Env
+require('dotenv').config()
+
 /**
  * User CRUD
  */
@@ -33,7 +36,7 @@ const createUser = async (req, res) => {
 
     if (_User) {
 
-      resp.makeResponsesError(res, "UFound")
+      resp.makeResponsesError(res, 'UFound')
 
     } else if (await mUser.findOne({
       email: value.email,
@@ -47,7 +50,7 @@ const createUser = async (req, res) => {
         }
       })
 
-      resp.makeResponsesOkData(res, saveUser, "Success")
+      resp.makeResponsesOkData(res, saveUser, 'Success')
 
     } else {
 
@@ -67,7 +70,7 @@ const createUser = async (req, res) => {
 
       const saveUser = await user.save()
       console.log(saveUser)
-      resp.makeResponsesOkData(res, saveUser, "UCreated")
+      resp.makeResponsesOkData(res, saveUser, 'UCreated')
 
     }
 
@@ -84,33 +87,25 @@ const login = async (req, res) => {
     })
 
     if (!valUser) {
-      return resp.makeResponsesError(res, "ULoginError1")
+      return resp.makeResponsesError(res, 'ULoginError1')
     }
 
     const valPass = await validate.comparePassword(req.body.password, valUser.password)
 
     if (!valPass) {
-      return resp.makeResponsesError(res, "ULoginError2")
+      return resp.makeResponsesError(res, 'ULoginError2')
     }
 
-    const token = jwt.sign({ id: valUser._id, }, "Flymagine-secret", { expiresIn: "86400" })
+    const secret = process.env.SECRET_KEY
+    const token = jwt.sign({ id: valUser._id, }, secret, { expiresIn: '1w' })
 
     const user = {
       id: valUser._id,
       idRole: valUser.idRole,
-      firstName: valUser.firstName,
-      lastName: valUser.lastName,
-      fullName: valUser.fullName,
-      email: valUser.email,
-      photo: valUser.photo,
-      address: valUser.address,
-      phone: valUser.phone,
-      birthday: valUser.birthday,
-      biography: valUser.biography,
       token: token
     }
 
-    resp.makeResponsesOkData(res, user, "Success")
+    resp.makeResponsesOkData(res, user, 'Success')
 
   } catch (error) {
     resp.makeResponsesException(res, error)
@@ -121,7 +116,7 @@ const getAllUsers = async (req, res) => {
   try {
     const users = await mUser.find({ status: 'A' })
       .sort({ createdAt: -1 })
-    resp.makeResponsesOkData(res, users, "Success")
+    resp.makeResponsesOkData(res, users, 'Success')
   } catch (error) {
     resp.makeResponsesError(res, error)
   }
@@ -131,7 +126,7 @@ const getUser = async (req, res) => {
   try {
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
       .populate({ path: 'idRole', select: 'name' })
-    resp.makeResponsesOkData(res, user, "Success")
+    resp.makeResponsesOkData(res, user, 'Success')
   } catch (error) {
     resp.makeResponsesError(res, error)
   }
@@ -145,7 +140,7 @@ const getOnlyUser = async (req, res) => {
     })
       .sort({ createdAt: -1 })
 
-    resp.makeResponsesOkData(res, user, "Success")
+    resp.makeResponsesOkData(res, user, 'Success')
   } catch (error) {
     resp.makeResponsesError(res, error)
   }
@@ -164,7 +159,7 @@ const getFilterUsers = async (req, res) => {
       .limit(10)
       .sort({ createdAt: -1 })
 
-    resp.makeResponsesOkData(res, users, "Success")
+    resp.makeResponsesOkData(res, users, 'Success')
   } catch (error) {
     resp.makeResponsesError(res, error)
   }
@@ -181,7 +176,7 @@ const getFilterUsersNoLimits = async (req, res) => {
     })
       .populate({ path: 'idRole', select: 'name' })
       .sort({ createdAt: -1 })
-    resp.makeResponsesOkData(res, users, "Success")
+    resp.makeResponsesOkData(res, users, 'Success')
   } catch (error) {
     resp.makeResponsesError(res, error)
   }
@@ -191,12 +186,12 @@ const uploadProfileImage = async (req, res) => {
   try {
 
     if (!await mUser.findOne({ _id: req.params.id, status: 'A' })) {
-      return resp.makeResponsesError(res, "UNotFound")
+      return resp.makeResponsesError(res, 'UNotFound')
     }
 
     const file = req?.file
     if (!file) {
-      return resp.makeResponsesError(res, "UImageError")
+      return resp.makeResponsesError(res, 'UImageError')
     }
 
     const filename = file?.filename
@@ -211,7 +206,7 @@ const uploadProfileImage = async (req, res) => {
       }
     })
 
-    resp.makeResponsesOkData(res, saveUser, "UUpdated")
+    resp.makeResponsesOkData(res, saveUser, 'UUpdated')
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -223,7 +218,7 @@ const updateUser = async (req, res) => {
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
 
     if (!user) {
-      return resp.makeResponsesError(res, "UNotFound")
+      return resp.makeResponsesError(res, 'UNotFound')
     } else {
 
       let firstName = req.body.firstName ? req.body.firstName : user.firstName
@@ -241,7 +236,7 @@ const updateUser = async (req, res) => {
         }
       })
 
-      resp.makeResponsesOkData(res, saveUser, "UUpdated")
+      resp.makeResponsesOkData(res, saveUser, 'UUpdated')
 
     }
 
@@ -263,19 +258,19 @@ const changePassword = async (req, res) => {
     })
 
     if (!valUser) {
-      return resp.makeResponsesError(res, "UNotFound")
+      return resp.makeResponsesError(res, 'UNotFound')
     }
 
     const valPass = await validate.comparePassword(req.body.password, valUser.password)
 
     if (!valPass) {
-      return resp.makeResponsesError(res, "UChangePasswordError")
+      return resp.makeResponsesError(res, 'UChangePasswordError')
     }
 
     const valNewPass = await validate.comparePassword(req.body.newPassword, valUser.password)
 
     if (valNewPass) {
-      return resp.makeResponsesError(res, "UChangePasswordError1")
+      return resp.makeResponsesError(res, 'UChangePasswordError1')
     }
 
     const saveUser = await mUser.findOneAndUpdate({
@@ -287,7 +282,7 @@ const changePassword = async (req, res) => {
       }
     })
 
-    resp.makeResponsesOkData(res, saveUser, "UChangePasswordSuccess")
+    resp.makeResponsesOkData(res, saveUser, 'UChangePasswordSuccess')
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -300,7 +295,7 @@ const deleteUser = async (req, res) => {
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
 
     if (!user) {
-      return resp.makeResponsesError(res, "UNotFound")
+      return resp.makeResponsesError(res, 'UNotFound')
     }
 
     const saveUser = await user.updateOne({
@@ -312,7 +307,7 @@ const deleteUser = async (req, res) => {
       }
     })
 
-    resp.makeResponsesOkData(res, saveUser, "UDeleted")
+    resp.makeResponsesOkData(res, saveUser, 'UDeleted')
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -321,10 +316,12 @@ const deleteUser = async (req, res) => {
 
 const restoredPassword = async (req, res) => {
   try {
-    const user = await mUser.findOne({ email: req.params.email, status: 'A' })
+
+    const email = req.body.email
+    const user = await mUser.findOne({ email: email, status: 'A' })
 
     if (!user) {
-      return resp.makeResponsesError(res, "UNotFound")
+      return resp.makeResponsesError(res, 'UNotFound')
     }
 
     let newPassword = generator.generate({
@@ -335,7 +332,7 @@ const restoredPassword = async (req, res) => {
     }) + '12*'
 
     const updateUser = await mUser.findOneAndUpdate({
-      email: req.params.email,
+      email: email,
       status: 'A'
     }, {
       $set: {
@@ -343,10 +340,9 @@ const restoredPassword = async (req, res) => {
       }
     })
 
-    let _resp = emails.sendEmail(req.params.email, newPassword)
+    let _resp = emails.sendEmail(email, newPassword)
 
-    console.log(_resp)
-    resp.makeResponsesOkData(res, updateUser, "UChangePasswordSuccess")
+    resp.makeResponsesOkData(res, updateUser, 'UChangePasswordSuccess')
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -363,7 +359,7 @@ const setFollowUser = async (req, res) => {
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
 
     if (!user) {
-      return resp.makeResponsesError(res, "UNotFound")
+      return resp.makeResponsesError(res, 'UNotFound')
     } else if (await mFollows.findOne({ idUser: req.params.id })) {
 
       const updateFollows = await mFollows.findOneAndUpdate({
@@ -374,7 +370,7 @@ const setFollowUser = async (req, res) => {
         }
       })
 
-      resp.makeResponsesOkData(res, updateFollows, "Success")
+      resp.makeResponsesOkData(res, updateFollows, 'Success')
 
     } else {
 
@@ -384,7 +380,7 @@ const setFollowUser = async (req, res) => {
       })
       const saveFollows = follows.save()
 
-      resp.makeResponsesOkData(res, saveFollows, "Success")
+      resp.makeResponsesOkData(res, saveFollows, 'Success')
 
     }
 
@@ -399,7 +395,7 @@ const getFollows = async (req, res) => {
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
 
     if (!user) {
-      return resp.makeResponsesError(res, "UNotFound")
+      return resp.makeResponsesError(res, 'UNotFound')
     } else if (!await mFollows.findOne({ idUser: req.params.id })) {
 
       const follows = await mFollows.create({
@@ -409,7 +405,7 @@ const getFollows = async (req, res) => {
 
       const saveFollows = follows.save()
 
-      resp.makeResponsesOkData(res, saveFollows, "Success")
+      resp.makeResponsesOkData(res, saveFollows, 'Success')
 
     } else {
 
@@ -418,7 +414,7 @@ const getFollows = async (req, res) => {
         .populate({ path: 'follows' })
         .sort({ createdAt: -1 })
 
-      resp.makeResponsesOkData(res, follows, "Success")
+      resp.makeResponsesOkData(res, follows, 'Success')
 
     }
 
@@ -455,14 +451,14 @@ const setUserBookFav = async (req, res) => {
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
 
     if (!user) {
-      return resp.makeResponsesError(res, "UNotFound")
+      return resp.makeResponsesError(res, 'UNotFound')
     } else if (await mUserBookFav.findOne({ idUser: req.params.id })) {
       const updateBookFav = await mUserBookFav.findOneAndUpdate({ idUser: req.params.id }, {
         $set: {
           booksFav: req.body
         }
       })
-      resp.makeResponsesOkData(res, updateBookFav, "Success")
+      resp.makeResponsesOkData(res, updateBookFav, 'Success')
 
     } else {
       const bookFav = new mUserBookFav({
@@ -471,7 +467,7 @@ const setUserBookFav = async (req, res) => {
       })
       const saveBookFav = await bookFav.save()
 
-      resp.makeResponsesOkData(res, saveBookFav, "UBookFavCreated")
+      resp.makeResponsesOkData(res, saveBookFav, 'UBookFavCreated')
 
     }
 
@@ -485,14 +481,14 @@ const setUserBookToRead = async (req, res) => {
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
 
     if (!user) {
-      return resp.makeResponsesError(res, "UNotFound")
+      return resp.makeResponsesError(res, 'UNotFound')
     } else if (await mUserBookToRead.findOne({ idUser: req.params.id })) {
       const updateBookToRead = await mUserBookToRead.findOneAndUpdate({ idUser: req.params.id }, {
         $set: {
           booksToRead: req.body
         }
       })
-      resp.makeResponsesOkData(res, updateBookToRead, "Success")
+      resp.makeResponsesOkData(res, updateBookToRead, 'Success')
 
     } else {
       const bookToRead = new mUserBookToRead({
@@ -501,7 +497,7 @@ const setUserBookToRead = async (req, res) => {
       })
       const saveBookToRead = await bookToRead.save()
 
-      resp.makeResponsesOkData(res, saveBookToRead, "UBookToReadCreated")
+      resp.makeResponsesOkData(res, saveBookToRead, 'UBookToReadCreated')
 
     }
 
@@ -516,14 +512,14 @@ const setUserBookReading = async (req, res) => {
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
 
     if (!user) {
-      return resp.makeResponsesError(res, "UNotFound")
+      return resp.makeResponsesError(res, 'UNotFound')
     } else if (await mUserBookReading.findOne({ idUser: req.params.id })) {
       const updateBookReading = await mUserBookReading.findOneAndUpdate({ idUser: req.params.id }, {
         $set: {
           booksReading: req.body
         }
       })
-      resp.makeResponsesOkData(res, updateBookReading, "Success")
+      resp.makeResponsesOkData(res, updateBookReading, 'Success')
 
     } else {
       const bookReading = new mUserBookReading({
@@ -532,7 +528,7 @@ const setUserBookReading = async (req, res) => {
       })
       const saveBookReading = await bookReading.save()
 
-      resp.makeResponsesOkData(res, saveBookReading, "UBookReadingCreated")
+      resp.makeResponsesOkData(res, saveBookReading, 'UBookReadingCreated')
 
     }
 
@@ -547,14 +543,14 @@ const setUserBookRead = async (req, res) => {
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
 
     if (!user) {
-      return resp.makeResponsesError(res, "UNotFound")
+      return resp.makeResponsesError(res, 'UNotFound')
     } else if (await mUserBookRead.findOne({ idUser: req.params.id })) {
       const updateBookRead = await mUserBookRead.findOneAndUpdate({ idUser: req.params.id }, {
         $set: {
           booksRead: req.body
         }
       })
-      resp.makeResponsesOkData(res, updateBookRead, "Success")
+      resp.makeResponsesOkData(res, updateBookRead, 'Success')
 
     } else {
       const bookRead = new mUserBookRead({
@@ -563,7 +559,7 @@ const setUserBookRead = async (req, res) => {
       })
       const saveBookRead = await bookRead.save()
 
-      resp.makeResponsesOkData(res, saveBookRead, "UBookReadCreated")
+      resp.makeResponsesOkData(res, saveBookRead, 'UBookReadCreated')
 
     }
 
@@ -578,7 +574,7 @@ const getBooksFavByUser = async (req, res) => {
       .populate('booksFav')
       .populate('idUser')
       .sort({ createdAt: -1 })
-    resp.makeResponsesOkData(res, reactions, "Success")
+    resp.makeResponsesOkData(res, reactions, 'Success')
   } catch (error) {
     resp.makeResponsesError(res, error)
   }
@@ -590,7 +586,7 @@ const getBooksToReadByUser = async (req, res) => {
       .populate('booksToRead')
       .populate('idUser')
       .sort({ createdAt: -1 })
-    resp.makeResponsesOkData(res, reactions, "Success")
+    resp.makeResponsesOkData(res, reactions, 'Success')
   } catch (error) {
     resp.makeResponsesError(res, error)
   }
@@ -602,7 +598,7 @@ const getBooksReadingByUser = async (req, res) => {
       .populate('booksReading')
       .populate('idUser')
       .sort({ createdAt: -1 })
-    resp.makeResponsesOkData(res, reactions, "Success")
+    resp.makeResponsesOkData(res, reactions, 'Success')
   } catch (error) {
     resp.makeResponsesError(res, error)
   }
@@ -614,7 +610,7 @@ const getBooksReadByUser = async (req, res) => {
       .populate('booksRead')
       .populate('idUser')
       .sort({ createdAt: -1 })
-    resp.makeResponsesOkData(res, reactions, "Success")
+    resp.makeResponsesOkData(res, reactions, 'Success')
   } catch (error) {
     resp.makeResponsesError(res, error)
   }
@@ -631,7 +627,7 @@ const setPersonalPreference = async (req, res) => {
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
 
     if (!user) {
-      return resp.makeResponsesError(res, "UNotFound")
+      return resp.makeResponsesError(res, 'UNotFound')
     }
     else if (await mPersonalPreference.findOne({ idUser: req.params.id })) {
       const personalPreference = await mPersonalPreference.updateOne({ idUser: req.params.id }, {
@@ -647,7 +643,7 @@ const setPersonalPreference = async (req, res) => {
         }
       })
 
-      resp.makeResponsesOkData(res, personalPreference, "PPreferenceUpdated")
+      resp.makeResponsesOkData(res, personalPreference, 'PPreferenceUpdated')
 
     } else {
       const personalPreference = new mPersonalPreference({
@@ -656,7 +652,7 @@ const setPersonalPreference = async (req, res) => {
       })
       const savePersonalPrefenreces = await personalPreference.save()
 
-      resp.makeResponsesOkData(res, savePersonalPrefenreces, "PPreferenceCreated")
+      resp.makeResponsesOkData(res, savePersonalPrefenreces, 'PPreferenceCreated')
 
     }
 
@@ -671,7 +667,7 @@ const getPersonalPreference = async (req, res) => {
     const user = await mPersonalPreference.find({ idUser: req.params.id })
       .populate({ path: 'idUser', select: 'firstName lastName email' })
       .populate('genres')
-    resp.makeResponsesOkData(res, user, "PPreferenceGet")
+    resp.makeResponsesOkData(res, user, 'PPreferenceGet')
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -684,7 +680,7 @@ const getUserByPersonalPreference = async (req, res) => {
     const genre = await mPersonalPreference.find({ idLiteraryGenre: req.params.id })
       .populate({ path: 'idUser', select: 'firstName lastName email' })
       .populate({ path: 'genres', select: 'name' })
-    resp.makeResponsesOkData(res, genre, "UGetByPersonalPreference")
+    resp.makeResponsesOkData(res, genre, 'UGetByPersonalPreference')
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -698,7 +694,7 @@ const deleteAllPersonalPreference = async (req, res) => {
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
 
     if (!user) {
-      return resp.makeResponsesError(res, "UNotFound")
+      return resp.makeResponsesError(res, 'UNotFound')
     } else {
       const personalPreference = await mPersonalPreference.findOneAndUpdate({ idUser: req.params.id }, {
         $set: {
@@ -713,7 +709,7 @@ const deleteAllPersonalPreference = async (req, res) => {
         }
       })
 
-      resp.makeResponsesOkData(res, personalPreference, "PPreferenceUpdated")
+      resp.makeResponsesOkData(res, personalPreference, 'PPreferenceUpdated')
 
     }
 

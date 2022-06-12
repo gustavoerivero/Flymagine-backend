@@ -3,10 +3,10 @@ const cUser = require('../controllers/CUser')
 const { imageUpload } = require('../utils/multer')
 
 // User actions routes
-router.post('/', cUser.createUser)
+router.post('/register', cUser.createUser)
 router.post('/:id/image', imageUpload.single('photo'), cUser.uploadProfileImage)
 router.post('/login', cUser.login)
-router.post('/restored/:email', cUser.restoredPassword)
+router.post('/restore', cUser.restoredPassword)
 router.post('/:id/password', cUser.changePassword)
 router.get('/', cUser.getAllUsers)
 router.get('/:id', cUser.getUser)

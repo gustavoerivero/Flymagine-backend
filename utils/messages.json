@@ -9,6 +9,8 @@
     "ULogin": "Login success",
     "ULoginError1": "Error, the user don't exits",
     "UloginError2": "Error, incorrect password",
+    "ULoginError3": "Error, the user is not authorized",
+    "ULoginError4": "Error, the user is not active",
     "UChangePasswordError": "Error, incorrect password",
     "UChangePasswordError1": "Error, the old password and new password are the same",
     "UChangePasswordSuccess": "User password changed",
@@ -99,6 +101,6 @@
     "UBookFavCreated": "User book favorite created",
     "UBookToReadCreated": "User book to read created",
     "UBookReadingCreated": "User book readind created",
-    "UBookReadCreated": "User book read created"
-
+    "UBookReadCreated": "User book read created",
+    "UnexpectedError": "Unexpected error"
 }
