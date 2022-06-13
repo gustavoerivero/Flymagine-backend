@@ -5,8 +5,8 @@ const createCommentPost = async (req, res) => {
   try {
     const value = req.body
     const commentPost = new mCommentPost({
-      idPost: value.idPost,
-      idUser: value.idUser,
+      post: value.post,
+      user: value.user,
       description: value.description,
       usersLiked: [],
     })
@@ -31,7 +31,7 @@ const getAllCommentPost = async (req, res) => {
 
 const getCommentPostByPost = async (req, res) => {
   try {
-    const commentPost = await mCommentPost.find({ idPost: req.params.id, status: 'A' })
+    const commentPost = await mCommentPost.find({ post: req.params.id, status: 'A' })
     resp.makeResponsesOkData(res, commentPost, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -49,7 +49,7 @@ const getCommentPostById = async (req, res) => {
 
 const getCommentPostByUser = async (req, res) => {
   try {
-    const commentPost = await mCommentPost.find({ idUser: req.params.id, status: 'A' })
+    const commentPost = await mCommentPost.find({ user: req.params.id, status: 'A' })
     resp.makeResponsesOkData(res, commentPost, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)

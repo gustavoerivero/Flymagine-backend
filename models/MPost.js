@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const postSchema = new Schema({
-  idUser: {
+  user: {
     type: Schema.Types.ObjectId,
     ref: 'MUser',
     required: true
@@ -22,7 +22,8 @@ const postSchema = new Schema({
     type: String,
     required: true,
     maxlength: 1,
-    default: 'A' // A = Active, I = Inactive
+    enum: ['A', 'I'], // A = Active, I = Inactive
+    default: 'A'
   },
   deletedAt: {
     type: Date,

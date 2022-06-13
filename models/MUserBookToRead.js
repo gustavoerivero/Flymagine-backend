@@ -7,7 +7,7 @@ const userBookToReadScheme = new Schema({
     ref: 'MBook',
     required: true,
   }],
-  idUser: {
+  user: {
     type: Schema.Types.ObjectId,
     ref: 'MUser',
     required: true,

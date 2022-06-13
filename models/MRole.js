@@ -15,10 +15,11 @@ const roleSchema = new Schema({
   },
   status: {
     type: String,
+    required: true,
     maxlength: 1,
-    default: 'A', // A = Active, I = Inactive
-    required: false,
-  }
+    enum: ['A', 'I'], // A = Active, I = Inactive
+    default: 'A'
+  },
 }, { timestamps: true })
 
 module.exports = mongoose.model('MRole', roleSchema)

@@ -6,8 +6,8 @@ const createCommentReview = async (req, res) => {
     const value = req.body
 
     const commentReview = new mCommentReview({
-      idUser: value.idUser,
-      idReview: value.idReview,
+      user: value.user,
+      review: value.review,
       description: value.description,      
       usersLiked: [],
     })
@@ -47,7 +47,7 @@ const getCommentReviews = async (req, res) => {
 const getCommentReviewsByReview = async (req, res) => {
   try {
 
-    const commentReviews = await mCommentReview.find({ idReview: req.params.id, status: 'A' })
+    const commentReviews = await mCommentReview.find({ review: req.params.id, status: 'A' })
 
     resp.makeResponsesOkData(res, commentReviews, "CRGetAllByReview")
 
@@ -59,7 +59,7 @@ const getCommentReviewsByReview = async (req, res) => {
 const getCommentReviewsByUser = async (req, res) => {
   try {
 
-    const commentReviews = await mCommentReview.find({ idUser: req.params.id, status: 'A' })
+    const commentReviews = await mCommentReview.find({ user: req.params.id, status: 'A' })
 
     resp.makeResponsesOkData(res, commentReviews, "CGetAllByUser")
 

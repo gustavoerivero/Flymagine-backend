@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const reactionPostSchema = new Schema({  
-  idPost: {
+  post: {
     type: Schema.Types.ObjectId,
     ref: 'MPost',
     required: ['Es necesario que ingrese el id de post'],

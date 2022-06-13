@@ -15,7 +15,7 @@ const createPost = async (req, res) => {
     const value = req.body
 
     const post = new mPost({
-      idUser: value.idUser,
+      user: value.user,
       description: value.description
     })
 
@@ -47,7 +47,7 @@ const getPostByUser = async (req, res) => {
   try {
 
     const post = await mPost.find({
-      idUser: req.params.id,
+      user: req.params.id,
       status: 'A'
     })
       .sort({ createdAt: -1 })
@@ -78,7 +78,7 @@ const getPostById = async (req, res) => {
 const getFeedPosts = async (req, res) => {
 
   const posts = await mPost.find({
-    idUser: {
+    user: {
       $in: req.body
     },
     status: 'A'
@@ -172,7 +172,7 @@ const getPostByHashtags = async (req, res) => {
       status: 'A'
     })
       .populate({ path: 'hashtags' })
-      .populate({ path: 'idPost' })
+      .populate({ path: 'post' })
       .sort({ createdAt: -1 })
 
     resp.makeResponsesOkData(res, posts, "PGetByHashtags")
@@ -193,27 +193,21 @@ const setUserTag = async (req, res) => {
 
     if (!post) {
 
-      console.log("Post not found")
-
       return resp.makeResponsesError(res, "PNotFound")
 
-    } else if (await mUserTag.findOne({ idPost: req.params.id })) {
+    } else if (await mUserTag.findOne({ post: req.params.id })) {
 
-      console.log('UserTag already exists')
-
-      const updateUserTag = await mUserTag.findOneAndUpdate({ idPost: req.params.id }, {
+      const updateUserTag = await mUserTag.findOneAndUpdate({ post: req.params.id }, {
         $set: {
           users: req.body
         }
       })
 
-      console.log(updateUserTag)
-
       resp.makeResponsesOkData(res, updateUserTag, "Success")
 
     } else {
       const userTag = new mUserTag({
-        idPost: req.params.id,
+        post: req.params.id,
         users: req.body,
       })
       const saveUserTag = await userTag.save()
@@ -227,7 +221,7 @@ const setUserTag = async (req, res) => {
 
 const getUserTagByPost = async (req, res) => {
   try {
-    const usertags = await mUserTag.find({ idPost: req.params.id })
+    const usertags = await mUserTag.find({ post: req.params.id })
       .populate({ path: 'users' })
     resp.makeResponsesOkData(res, usertags, "Success")
   } catch (error) {
@@ -248,9 +242,9 @@ const setHashtagTag = async (req, res) => {
 
       return resp.makeResponsesError(res, "PNotFound")
 
-    } else if (await mPostTag.findOne({ idPost: req.params.id })) {
+    } else if (await mPostTag.findOne({ post: req.params.id })) {
 
-      const updatePostTags = await mPostTag.findOneAndUpdate({ idPost: req.params.id }, {
+      const updatePostTags = await mPostTag.findOneAndUpdate({ post: req.params.id }, {
         $set: {
           hashtags: req.body
         }
@@ -260,7 +254,7 @@ const setHashtagTag = async (req, res) => {
 
     } else {
       const hashtagTag = new mPostTag({
-        idPost: req.params.id,
+        post: req.params.id,
         hashtags: req.body,
       })
       const saveHashtagTag = await hashtagTag.save()
@@ -274,7 +268,7 @@ const setHashtagTag = async (req, res) => {
 
 const getHashtagTagByPost = async (req, res) => {
   try {
-    const reactions = await mPostTag.find({ idPost: req.params.id })
+    const reactions = await mPostTag.find({ post: req.params.id })
       .populate({ path: 'hashtags' })
     resp.makeResponsesOkData(res, reactions, "Success")
   } catch (error) {
@@ -289,8 +283,8 @@ const setReactionPost = async (req, res) => {
 
     if (!post) {
       return resp.makeResponsesError(res, "PNotFound")
-    } else if (await mReactionPost.findOne({ idPost: req.params.id })) {
-      const updateReaction = await mReactionPost.findOneAndUpdate({ idPost: req.params.id }, {
+    } else if (await mReactionPost.findOne({ post: req.params.id })) {
+      const updateReaction = await mReactionPost.findOneAndUpdate({ post: req.params.id }, {
         $set: {
           users: req.body
         }
@@ -299,7 +293,7 @@ const setReactionPost = async (req, res) => {
 
     } else {
       const reactionPost = new mReactionPost({
-        idPost: req.params.id,
+        post: req.params.id,
         users: req.body
       })
       const saveReactionPost = await reactionPost.save()
@@ -315,7 +309,7 @@ const setReactionPost = async (req, res) => {
 
 const getReactionPost = async (req, res) => {
   try {
-    const reactions = await mReactionPost.find({ idPost: req.params.id, status: 'A' })
+    const reactions = await mReactionPost.find({ post: req.params.id, status: 'A' })
       .populate('users')
     resp.makeResponsesOkData(res, reactions, "Success")
   } catch (error) {

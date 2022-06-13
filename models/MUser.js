@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const userSchema = Schema({
-  idRole: {
+  role: {
     type: Schema.Types.ObjectId,
     ref: 'MRole',
     required: true,
@@ -58,16 +58,12 @@ const userSchema = Schema({
     required: false,
     maxlength: 1024,
   },
-  lastConnection: {
-    type: Date,
-    required: false,
-    default: Date.now(),
-  },
   status: {
     type: String,
-    default: 'A', // A = Active, I = Inactive
+    required: true,
     maxlength: 1,
-    required: false,
+    enum: ['A', 'I'], // A = Active, I = Inactive
+    default: 'A'
   },
   deletedAt: {
     type: Date,

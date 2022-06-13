@@ -2,20 +2,15 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const commentPostSchema = new Schema({
-  idPost: {
+  post: {
     type: Schema.Types.ObjectId,
     ref: 'MPost',
     required: true
   },
-  idUser: {
+  user: {
     type: Schema.Types.ObjectId,
     ref: 'MUser',
     required: true
-  },
-  commentDate: {
-    type: Date,
-    required: true,
-    default: Date.now
   },
   description: {
     type: String,
@@ -30,7 +25,8 @@ const commentPostSchema = new Schema({
     type: String,
     required: true,
     maxlength: 1,
-    default: 'A' // A = Active, I = Inactive
+    enum: ['A', 'I'], // A = Active, I = Inactive
+    default: 'A'
   },
   deleteAt: {
     type: Date,

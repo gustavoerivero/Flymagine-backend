@@ -9,8 +9,8 @@ const createReview = async (req, res) => {
     const value = req.body
 
     const review = new mReview({
-      idUser: value.idUser,
-      idBook: value.idBook,
+      user: value.user,
+      book: value.book,
       description: value.description,
       rating: value.rating,
     })
@@ -52,7 +52,7 @@ const getReviewById = async (req, res) => {
 const getReviewByBook = async (req, res) => {
   try {
 
-    const review = await mReview.find({ idBook: req.params.id, status: 'A' })
+    const review = await mReview.find({ book: req.params.id, status: 'A' })
       .sort({ createdAt: -1 })
 
     resp.makeResponsesOkData(res, review, "RVGetByBook")
@@ -65,8 +65,8 @@ const getReviewByBook = async (req, res) => {
 const getReviewByUser = async (req, res) => {
   try {
 
-    const review = await mReview.find({ idUser: req.params.id, status: 'A' })
-      .populate('idBook')
+    const review = await mReview.find({ user: req.params.id, status: 'A' })
+      .populate('book')
       .sort({ createdAt: -1 })
 
     resp.makeResponsesOkData(res, review, "RVGetByUser")
@@ -131,8 +131,8 @@ const setReactionReview = async (req, res) => {
 
     if (!review) {
       return resp.makeResponsesError(res, "RNotFound")
-    } else if (await mReactionReview.findOne({ idReview: req.params.id })) {
-      const updateReaction = await mReactionReview.findOneAndUpdate({ idReview: req.params.id }, {
+    } else if (await mReactionReview.findOne({ review: req.params.id })) {
+      const updateReaction = await mReactionReview.findOneAndUpdate({ review: req.params.id }, {
         $set: {
           users: req.body
         }
@@ -141,7 +141,7 @@ const setReactionReview = async (req, res) => {
 
     } else {
       const reactionReview = new mReactionReview({
-        idReview: req.params.id,
+        review: req.params.id,
         users: req.body
       })
       const saveReactionReview = await reactionReview.save()
@@ -157,8 +157,8 @@ const setReactionReview = async (req, res) => {
 
 const getReactionReview = async (req, res) => {
   try {
-    const reactions = await mReactionReview.find({ idReview: req.params.id })
-      .populate({ path: 'idReview', select: '_id' })
+    const reactions = await mReactionReview.find({ review: req.params.id })
+      .populate({ path: 'review', select: '_id' })
       .populate({ path: 'users', select: 'firstName lastName' })
     resp.makeResponsesOkData(res, reactions, "Success")
   } catch (error) {

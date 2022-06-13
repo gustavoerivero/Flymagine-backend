@@ -15,9 +15,10 @@ const literaryGenreSchema = new Schema({
   },
   status: {
     type: String,
-    maxlength: 1,
-    default: 'A', // A = Active, I = Inactive
     required: true,
+    maxlength: 1,
+    enum: ['A', 'I'], // A = Active, I = Inactive
+    default: 'A'
   },
 }, { timestamps: true })
 

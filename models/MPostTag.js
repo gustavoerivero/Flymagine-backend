@@ -7,7 +7,7 @@ const postTagSchema = new Schema({
     ref: 'MHashtag',
     required: true,
   }],
-  idPost: {
+  post: {
     type: Schema.Types.ObjectId,
     ref: 'MPost',
     required: true,

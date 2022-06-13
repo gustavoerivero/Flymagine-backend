@@ -55,7 +55,7 @@ const createUser = async (req, res) => {
     } else {
 
       const user = new mUser({
-        idRole: value.idRole,
+        role: value.role,
         firstName: value.firstName,
         lastName: value.lastName,
         fullName: value.firstName + ' ' + value.lastName,
@@ -69,7 +69,6 @@ const createUser = async (req, res) => {
       })
 
       const saveUser = await user.save()
-      console.log(saveUser)
       resp.makeResponsesOkData(res, saveUser, 'UCreated')
 
     }
@@ -101,7 +100,7 @@ const login = async (req, res) => {
 
     const user = {
       id: valUser._id,
-      idRole: valUser.idRole,
+      role: valUser.role,
       token: token
     }
 
@@ -125,7 +124,7 @@ const getAllUsers = async (req, res) => {
 const getUser = async (req, res) => {
   try {
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
-      .populate({ path: 'idRole', select: 'name' })
+      .populate({ path: 'role', select: 'name' })
     resp.makeResponsesOkData(res, user, 'Success')
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -155,7 +154,7 @@ const getFilterUsers = async (req, res) => {
       ],
       status: 'A'
     })
-      .populate({ path: 'idRole', select: 'name' })
+      .populate({ path: 'role', select: 'name' })
       .limit(10)
       .sort({ createdAt: -1 })
 
@@ -174,7 +173,7 @@ const getFilterUsersNoLimits = async (req, res) => {
       ],
       status: 'A'
     })
-      .populate({ path: 'idRole', select: 'name' })
+      .populate({ path: 'role', select: 'name' })
       .sort({ createdAt: -1 })
     resp.makeResponsesOkData(res, users, 'Success')
   } catch (error) {
@@ -241,9 +240,6 @@ const updateUser = async (req, res) => {
     }
 
   } catch (error) {
-
-    console.log(error)
-    console.log('this is a error')
     resp.makeResponsesException(res, error)
   }
 }
@@ -286,7 +282,6 @@ const changePassword = async (req, res) => {
 
   } catch (error) {
     resp.makeResponsesError(res, error)
-    console.log('error', error)
   }
 }
 
@@ -360,10 +355,10 @@ const setFollowUser = async (req, res) => {
 
     if (!user) {
       return resp.makeResponsesError(res, 'UNotFound')
-    } else if (await mFollows.findOne({ idUser: req.params.id })) {
+    } else if (await mFollows.findOne({ user: req.params.id })) {
 
       const updateFollows = await mFollows.findOneAndUpdate({
-        idUser: req.params.id
+        user: req.params.id
       }, {
         $set: {
           follows: req.body
@@ -375,7 +370,7 @@ const setFollowUser = async (req, res) => {
     } else {
 
       const follows = await mFollows.create({
-        idUser: req.params.id,
+        user: req.params.id,
         follows: req.body
       })
       const saveFollows = follows.save()
@@ -396,10 +391,10 @@ const getFollows = async (req, res) => {
 
     if (!user) {
       return resp.makeResponsesError(res, 'UNotFound')
-    } else if (!await mFollows.findOne({ idUser: req.params.id })) {
+    } else if (!await mFollows.findOne({ user: req.params.id })) {
 
       const follows = await mFollows.create({
-        idUser: req.params.id,
+        user: req.params.id,
         follows: []
       })
 
@@ -409,8 +404,8 @@ const getFollows = async (req, res) => {
 
     } else {
 
-      const follows = await mFollows.findOne({ idUser: req.params.id })
-        .populate({ path: 'idUser', select: 'firstName lastName' })
+      const follows = await mFollows.findOne({ user: req.params.id })
+        .populate({ path: 'user', select: 'firstName lastName' })
         .populate({ path: 'follows' })
         .sort({ createdAt: -1 })
 
@@ -427,11 +422,11 @@ const getFollowers = async (req, res) => {
   try {
     const followers = await mFollows.find({
       follows: req.params.id,
-      idUser: {
+      user: {
         $nin: req.params.id
       }
     })
-      .populate({ path: 'idUser' })
+      .populate({ path: 'user' })
       .sort({ createdAt: -1 })
 
     resp.makeResponsesOkData(res, followers, 'Success')
@@ -452,8 +447,8 @@ const setUserBookFav = async (req, res) => {
 
     if (!user) {
       return resp.makeResponsesError(res, 'UNotFound')
-    } else if (await mUserBookFav.findOne({ idUser: req.params.id })) {
-      const updateBookFav = await mUserBookFav.findOneAndUpdate({ idUser: req.params.id }, {
+    } else if (await mUserBookFav.findOne({ user: req.params.id })) {
+      const updateBookFav = await mUserBookFav.findOneAndUpdate({ user: req.params.id }, {
         $set: {
           booksFav: req.body
         }
@@ -462,7 +457,7 @@ const setUserBookFav = async (req, res) => {
 
     } else {
       const bookFav = new mUserBookFav({
-        idUser: req.params.id,
+        user: req.params.id,
         booksFav: req.body
       })
       const saveBookFav = await bookFav.save()
@@ -482,8 +477,8 @@ const setUserBookToRead = async (req, res) => {
 
     if (!user) {
       return resp.makeResponsesError(res, 'UNotFound')
-    } else if (await mUserBookToRead.findOne({ idUser: req.params.id })) {
-      const updateBookToRead = await mUserBookToRead.findOneAndUpdate({ idUser: req.params.id }, {
+    } else if (await mUserBookToRead.findOne({ user: req.params.id })) {
+      const updateBookToRead = await mUserBookToRead.findOneAndUpdate({ user: req.params.id }, {
         $set: {
           booksToRead: req.body
         }
@@ -492,7 +487,7 @@ const setUserBookToRead = async (req, res) => {
 
     } else {
       const bookToRead = new mUserBookToRead({
-        idUser: req.params.id,
+        user: req.params.id,
         booksToRead: req.body
       })
       const saveBookToRead = await bookToRead.save()
@@ -513,8 +508,8 @@ const setUserBookReading = async (req, res) => {
 
     if (!user) {
       return resp.makeResponsesError(res, 'UNotFound')
-    } else if (await mUserBookReading.findOne({ idUser: req.params.id })) {
-      const updateBookReading = await mUserBookReading.findOneAndUpdate({ idUser: req.params.id }, {
+    } else if (await mUserBookReading.findOne({ user: req.params.id })) {
+      const updateBookReading = await mUserBookReading.findOneAndUpdate({ user: req.params.id }, {
         $set: {
           booksReading: req.body
         }
@@ -523,7 +518,7 @@ const setUserBookReading = async (req, res) => {
 
     } else {
       const bookReading = new mUserBookReading({
-        idUser: req.params.id,
+        user: req.params.id,
         booksReading: req.body
       })
       const saveBookReading = await bookReading.save()
@@ -544,8 +539,8 @@ const setUserBookRead = async (req, res) => {
 
     if (!user) {
       return resp.makeResponsesError(res, 'UNotFound')
-    } else if (await mUserBookRead.findOne({ idUser: req.params.id })) {
-      const updateBookRead = await mUserBookRead.findOneAndUpdate({ idUser: req.params.id }, {
+    } else if (await mUserBookRead.findOne({ user: req.params.id })) {
+      const updateBookRead = await mUserBookRead.findOneAndUpdate({ user: req.params.id }, {
         $set: {
           booksRead: req.body
         }
@@ -554,7 +549,7 @@ const setUserBookRead = async (req, res) => {
 
     } else {
       const bookRead = new mUserBookRead({
-        idUser: req.params.id,
+        user: req.params.id,
         booksRead: req.body
       })
       const saveBookRead = await bookRead.save()
@@ -570,9 +565,9 @@ const setUserBookRead = async (req, res) => {
 
 const getBooksFavByUser = async (req, res) => {
   try {
-    const reactions = await mUserBookFav.find({ idUser: req.params.id, status: 'A' })
+    const reactions = await mUserBookFav.find({ user: req.params.id, status: 'A' })
       .populate('booksFav')
-      .populate('idUser')
+      .populate('user')
       .sort({ createdAt: -1 })
     resp.makeResponsesOkData(res, reactions, 'Success')
   } catch (error) {
@@ -582,9 +577,9 @@ const getBooksFavByUser = async (req, res) => {
 
 const getBooksToReadByUser = async (req, res) => {
   try {
-    const reactions = await mUserBookToRead.find({ idUser: req.params.id, status: 'A' })
+    const reactions = await mUserBookToRead.find({ user: req.params.id, status: 'A' })
       .populate('booksToRead')
-      .populate('idUser')
+      .populate('user')
       .sort({ createdAt: -1 })
     resp.makeResponsesOkData(res, reactions, 'Success')
   } catch (error) {
@@ -594,9 +589,9 @@ const getBooksToReadByUser = async (req, res) => {
 
 const getBooksReadingByUser = async (req, res) => {
   try {
-    const reactions = await mUserBookReading.find({ idUser: req.params.id, status: 'A' })
+    const reactions = await mUserBookReading.find({ user: req.params.id, status: 'A' })
       .populate('booksReading')
-      .populate('idUser')
+      .populate('user')
       .sort({ createdAt: -1 })
     resp.makeResponsesOkData(res, reactions, 'Success')
   } catch (error) {
@@ -606,9 +601,9 @@ const getBooksReadingByUser = async (req, res) => {
 
 const getBooksReadByUser = async (req, res) => {
   try {
-    const reactions = await mUserBookRead.find({ idUser: req.params.id, status: 'A' })
+    const reactions = await mUserBookRead.find({ user: req.params.id, status: 'A' })
       .populate('booksRead')
-      .populate('idUser')
+      .populate('user')
       .sort({ createdAt: -1 })
     resp.makeResponsesOkData(res, reactions, 'Success')
   } catch (error) {
@@ -629,25 +624,18 @@ const setPersonalPreference = async (req, res) => {
     if (!user) {
       return resp.makeResponsesError(res, 'UNotFound')
     }
-    else if (await mPersonalPreference.findOne({ idUser: req.params.id })) {
-      const personalPreference = await mPersonalPreference.updateOne({ idUser: req.params.id }, {
+    else if (await mPersonalPreference.findOne({ user: req.params.id })) {
+      const personalPreference = await mPersonalPreference.updateOne({ user: req.params.id }, {
         $set: {
           genres: req.body
         },
-        function(error, success) {
-          if (error) {
-            console.log(error);
-          } else {
-            console.log(success);
-          }
-        }
       })
 
       resp.makeResponsesOkData(res, personalPreference, 'PPreferenceUpdated')
 
     } else {
       const personalPreference = new mPersonalPreference({
-        idUser: req.params.id,
+        user: req.params.id,
         genres: req.body
       })
       const savePersonalPrefenreces = await personalPreference.save()
@@ -664,8 +652,8 @@ const setPersonalPreference = async (req, res) => {
 const getPersonalPreference = async (req, res) => {
   try {
 
-    const user = await mPersonalPreference.find({ idUser: req.params.id })
-      .populate({ path: 'idUser', select: 'firstName lastName email' })
+    const user = await mPersonalPreference.find({ user: req.params.id })
+      .populate({ path: 'user', select: 'firstName lastName email' })
       .populate('genres')
     resp.makeResponsesOkData(res, user, 'PPreferenceGet')
 
@@ -678,7 +666,7 @@ const getUserByPersonalPreference = async (req, res) => {
   try {
 
     const genre = await mPersonalPreference.find({ idLiteraryGenre: req.params.id })
-      .populate({ path: 'idUser', select: 'firstName lastName email' })
+      .populate({ path: 'user', select: 'firstName lastName email' })
       .populate({ path: 'genres', select: 'name' })
     resp.makeResponsesOkData(res, genre, 'UGetByPersonalPreference')
 
@@ -696,17 +684,10 @@ const deleteAllPersonalPreference = async (req, res) => {
     if (!user) {
       return resp.makeResponsesError(res, 'UNotFound')
     } else {
-      const personalPreference = await mPersonalPreference.findOneAndUpdate({ idUser: req.params.id }, {
+      const personalPreference = await mPersonalPreference.findOneAndUpdate({ user: req.params.id }, {
         $set: {
           genres: []
         },
-        function(error, success) {
-          if (error) {
-            console.log(error);
-          } else {
-            console.log(success);
-          }
-        }
       })
 
       resp.makeResponsesOkData(res, personalPreference, 'PPreferenceUpdated')

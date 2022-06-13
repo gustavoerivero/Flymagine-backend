@@ -11,6 +11,8 @@ const authJwt = () => {
     algorithms: ['HS256']
   }).unless({
     path: [
+      `${url}`,
+      `${url}${api}`,	
       `${url}${api}/user/login`,
       `${url}${api}/user/register`,
       `${url}${api}/user/restore`,

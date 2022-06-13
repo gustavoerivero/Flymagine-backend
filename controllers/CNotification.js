@@ -6,8 +6,10 @@ const createNotification = async (req, res) => {
     const value = req.body
 
     const notification = new mNotification({
-      idUser: value.idUser,
+      user: value.user,
       description: value.description,
+      link: value.link,
+      type: value.type,
     })
 
     const saveNotification = await notification.save()
@@ -30,7 +32,7 @@ const getAllNotification = async (req, res) => {
 
 const getNotificationByUser = async (req, res) => {
   try {
-    const notification = await mNotification.find({ idUser: req.params.id, status: 'A' })
+    const notification = await mNotification.find({ user: req.params.id, status: 'A' })
     resp.makeResponsesOkData(res, notification, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)

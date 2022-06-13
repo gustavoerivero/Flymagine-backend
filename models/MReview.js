@@ -2,12 +2,12 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const reviewSchema = new Schema({
-  idUser: {
+  user: {
     type: Schema.Types.ObjectId,
     ref: 'MUser',
     required: true,
   },
-  idBook: {
+  book: {
     type: Schema.Types.ObjectId,
     ref: 'MBook',
     required: true,
@@ -17,11 +17,6 @@ const reviewSchema = new Schema({
     required: true,
     maxlength: 1024,
   },
-  reviewDate: {
-    type: Date,
-    default: Date.now,
-    required: true,
-  },
   rating: {
     type: Number,
     required: true,
@@ -29,9 +24,10 @@ const reviewSchema = new Schema({
   },
   status: {
     type: String,
-    default: 'A', // A = Active, I = Inactive
     required: true,
     maxlength: 1,
+    enum: ['A', 'I'], // A = Active, I = Inactive
+    default: 'A'
   },
   deletedAt: {
     type: Date,

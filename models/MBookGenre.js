@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const bookGenreSchema = new Schema({
-  idBook: {
+  book: {
     type: Schema.Types.ObjectId,
     ref: 'MBook',
     required: ['Es necesario que ingrese el id de libro'],

@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const bookSchema = new Schema({
-  idUser: {
+  user: {
     type: Schema.Types.ObjectId,
     ref: 'MUser',
     required: true,
@@ -12,7 +12,7 @@ const bookSchema = new Schema({
     required: true,
     maxlength: 255,
   },
-  sypnosis: {
+  synopsis: {
     type: String,
     required: true,
     maxlength: 1024,
@@ -27,20 +27,16 @@ const bookSchema = new Schema({
     required: true,
     maxlength: 1024,
   },
-  postDate: {
-    type: Date,
-    default: Date.now,
-    required: true,
-  },
   creationDate: {
     type: Date,
     required: true,
   },
   status: {
     type: String,
-    default: 'A', // A = Active, I = Inactive
     required: true,
     maxlength: 1,
+    enum: ['A', 'I'], // A = Active, I = Inactive
+    default: 'A'
   },
   deletedAt: {
     type: Date,

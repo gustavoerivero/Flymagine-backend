@@ -7,7 +7,7 @@ const userTagSchema = new Schema({
     ref: 'MUser',
     required: true,
   }],
-  idPost: {
+  post: {
     type: Schema.Types.ObjectId,
     ref: 'MPost',
     required: true,

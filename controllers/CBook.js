@@ -12,7 +12,7 @@ const createBook = async (req, res) => {
     const value = req.body
 
     const book = await mBook.findOne({
-      idUser: value.idUser,
+      user: value.user,
       name: value.name,
       status: 'A'
     })
@@ -21,14 +21,14 @@ const createBook = async (req, res) => {
       resp.makeResponsesError(res, "BFound")
 
     } else if (await mBook.findOne({
-      idUser: value.idUser,
+      user: value.user,
       name: value.name,
       status: 'I'
     })) {
 
-      const saveBook = await mBook.findOneAndUpdate({ idUser: value.idUser, name: value.name }, {
+      const saveBook = await mBook.findOneAndUpdate({ user: value.user, name: value.name }, {
         $set: {
-          sypnosis: value.sypnosis,
+          synopsis: value.synopsis,
           photo: value.photo,
           document: value.document,
           creationDate: value.creationDate,
@@ -42,9 +42,9 @@ const createBook = async (req, res) => {
     } else {
 
       const book = new mBook({
-        idUser: value.idUser,
+        user: value.user,
         name: value.name,
-        sypnosis: value.sypnosis,
+        synopsis: value.synopsis,
         photo: value.photo,
         document: value.document,
         creationDate: value.creationDate,
@@ -95,7 +95,7 @@ const getFilterBooks = async (req, res) => {
       ],
       status: 'A'
     })
-      .populate({ path: 'idUser', select: 'firstName lastName photo' })
+      .populate({ path: 'user', select: 'firstName lastName photo' })
       .sort({ createdAt: -1 })
     resp.makeResponsesOkData(res, books, "Success")
   } catch (error) {
@@ -210,7 +210,7 @@ const getBooksByUser = async (req, res) => {
   try {
 
     const books = await mBook.find({
-      idUser: req.params.id,
+      user: req.params.id,
       status: 'A'
     })
     .sort({ createdAt: -1 })
@@ -233,8 +233,8 @@ const setBookGenre = async (req, res) => {
 
     if (!book) {
       return resp.makeResponsesError(res, "BNotFound")
-    } else if (await mBookGenre.findOne({ idBook: req.params.id })){
-      const genre = await mBookGenre.updateOne({ idBook: req.params.id }, {
+    } else if (await mBookGenre.findOne({ book: req.params.id })){
+      const genre = await mBookGenre.updateOne({ book: req.params.id }, {
         $set: {
           genres: req.body
         },
@@ -251,7 +251,7 @@ const setBookGenre = async (req, res) => {
 
     } else {
       const bookGenre = new mBookGenre({
-        idBook: req.params.id,
+        book: req.params.id,
         genres: req.body
       })
       const saveBookGenre = await bookGenre.save()
@@ -268,8 +268,8 @@ const setBookGenre = async (req, res) => {
 const getBookGenre = async (req, res) => {
   try {
 
-    const book = await mBookGenre.find({ idBook: req.params.id })
-      .populate({ path: 'idBook', select: 'name' })
+    const book = await mBookGenre.find({ book: req.params.id })
+      .populate({ path: 'book', select: 'name' })
       .populate({ path: 'genres', select: 'name' })
     resp.makeResponsesOkData(res, book, "BGenreGet")
 
@@ -281,8 +281,8 @@ const getBookGenre = async (req, res) => {
 const getBooksByGenre = async (req, res) => {
   try {
 
-    const genre = await mBookGenre.find({ idLiteraryGenre: req.params.id })
-      .populate({ path: 'idBook', select: 'name' })
+    const genre = await mBookGenre.find({ genres: req.params.id })
+      .populate({ path: 'book', select: 'name' })
       .populate({ path: 'genres', select: 'name' })
     resp.makeResponsesOkData(res, genre, "BGetByGenre")
 
@@ -298,21 +298,14 @@ const deleteBookGenre = async (req, res) => {
     if (!book) {
       return resp.makeResponsesError(res, "BNotFound")
     } else {
-      const deleteBGenre = await mBookGenre.findOneAndDelete({ idBook: req.params.id }, {
+      const deleteBGenre = await mBookGenre.findOneAndDelete({ book: req.params.id }, {
         $set: {
           genres: []
-        },
-        function(error, success) {
-          if (error) {
-            console.log(error);
-          } else {
-            console.log(success);
-          }
         }
       })
-    }
 
-    resp.makeResponsesOkData(res, deleteBGenre, "BGenreDeleted")
+      resp.makeResponsesOkData(res, deleteBGenre, "BGenreDeleted")
+    }
 
   } catch (error) {
     resp.makeResponsesError(res, error)

@@ -11,7 +11,8 @@ const hashtagSchema = new Schema({
   status: {
     type: String,
     required: true,
-    enum: ['A', 'I'],
+    maxlength: 1,
+    enum: ['A', 'I'], // A = Active, I = Inactive
     default: 'A'
   },
   deleteAt: {
