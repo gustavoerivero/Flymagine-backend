@@ -619,15 +619,15 @@ const getBooksReadByUser = async (req, res) => {
 const setPersonalPreference = async (req, res) => {
   try {
 
-    const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
+    const user = await mUser.findOne({ _id: req.body.id, status: 'A' })
 
     if (!user) {
       return resp.makeResponsesError(res, 'UNotFound')
     }
-    else if (await mPersonalPreference.findOne({ user: req.params.id })) {
-      const personalPreference = await mPersonalPreference.updateOne({ user: req.params.id }, {
+    else if (await mPersonalPreference.findOne({ user: req.body.id })) {
+      const personalPreference = await mPersonalPreference.updateOne({ user: req.body.id }, {
         $set: {
-          genres: req.body
+          genres: req.body.genres
         },
       })
 
@@ -635,8 +635,8 @@ const setPersonalPreference = async (req, res) => {
 
     } else {
       const personalPreference = new mPersonalPreference({
-        user: req.params.id,
-        genres: req.body
+        user: req.body.id,
+        genres: req.body.genres
       })
       const savePersonalPrefenreces = await personalPreference.save()
 
