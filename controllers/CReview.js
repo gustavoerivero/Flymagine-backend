@@ -52,7 +52,8 @@ const getReviewById = async (req, res) => {
 const getReviewByBook = async (req, res) => {
   try {
 
-    const review = await mReview.find({ book: req.params.id, status: 'A' })
+    const review = await mReview.find({ book: req.params.id, status: 'A' })      
+      .populate({ path: 'user' })
       .sort({ createdAt: -1 })
 
     resp.makeResponsesOkData(res, review, "RVGetByBook")
@@ -66,7 +67,7 @@ const getReviewByUser = async (req, res) => {
   try {
 
     const review = await mReview.find({ user: req.params.id, status: 'A' })
-      .populate('book')
+      .populate({ path: 'book' })
       .sort({ createdAt: -1 })
 
     resp.makeResponsesOkData(res, review, "RVGetByUser")
