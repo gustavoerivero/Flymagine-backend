@@ -1,0 +1,203 @@
+definitions:
+  Role:
+    type: 'object'
+    required:
+      - 'name'
+    properties:
+      OK:
+        type: string
+        description: '1'
+        example: '1'
+      Message:
+        type: string
+        description: 'Success' 
+        example: 'Success'
+      Data:
+        type: object
+        properties:
+            _id:
+              type: string
+              example: '62a68dfff76e5e02ef008af8'
+            name:
+              type: string
+              example: 'Writer'
+            deletedAt:
+              type: date
+              example: 2022-06-13T01:08:15.785Z
+            createdAt:
+              type: date
+              example: 2022-06-13T01:08:15.785Z
+            updatedAt: 
+              type: date
+              example: 2022-06-13T01:08:15.785Z
+            status:
+              type: string
+              example: 'A'
+
+  RoleList:
+    type: 'object'
+    properties:
+      OK:
+        type: string
+        description: '1'
+        example: '1'
+      Message:
+        type: string
+        description: 'Success' 
+        example: 'Success'
+      Data:
+        type: 'array'
+        items:
+          type: 'object'
+          properties:
+            _id:
+              type: string
+              example: '62a68dfff76e5e02ef008af8'
+            name:
+              type: string
+              example: 'Writer'
+            deletedAt:
+              type: date
+              example: 2022-06-13T01:08:15.785Z
+            createdAt:
+              type: date
+              example: 2022-06-13T01:08:15.785Z
+            updatedAt: 
+              type: date
+              example: 2022-06-13T01:08:15.785Z
+            status:
+              type: string
+              example: 'A'
+
+/flymagine/api/v1/role:
+  get:
+    tags:
+      - 'Role'
+    summary: 'Get all existing roles'
+    description: 'Shows all roles created to be used by users'
+    produces:
+      - 'application/json'
+    responses:
+      '200':
+        description: 'Success'
+        schema:
+          $ref: '#/definitions/RoleList'
+      '404':
+        description: 'Unexpected error || Error, the user is not authorized'
+
+      '500':
+        description: 'SERVER ERROR'
+
+  post:
+    tags:
+      - 'Role'
+    summary: 'Registers a user role to be used in the application by the application users'
+    description: 'Registers a user role to be used in the application by the application users'
+    produces:
+      - 'application/json'
+    parameters:
+      - in: body
+        name: body
+        description: Role name
+        schema:
+          example: { 'name': 'Reader' }
+    responses:
+      '200':
+        description: 'Success'
+        schema:
+          $ref: '#/definitions/Role'
+      '404':
+        description: 'Unexpected error || Error, the user is not authorized'
+
+      '500':
+        description: 'SERVER ERROR'
+
+/flymagine/api/v1/role/{id}:
+  get:
+    tags:
+      - 'Role'
+    summary: 'Get a existing role'
+    description: 'Get a specific role located by its id'
+    produces:
+      - 'application/json'
+    parameters:
+      - name: id
+        in: path
+        description: Role id
+        required: true
+        example: '62a68e04f76e5e02ef008afc'
+        schema:
+          type: 'string'
+          example: '62a68e04f76e5e02ef008afc'
+    responses:
+      '200':
+        description: 'Success'
+        schema:
+          $ref: '#/definitions/Role'
+      '404':
+        description: 'Unexpected error || Error, the user is not authorized'
+
+      '500':
+        description: 'SERVER ERROR'
+
+  put:
+    tags:
+      - 'Role'
+    summary: 'Update an existing role'
+    description: 'Cambia el nombre de un rol existente localizado por su id'
+    produces:
+      - 'application/json'
+    parameters:
+      - name: id
+        in: path
+        description: Role id
+        required: true
+        example: '62a68e04f76e5e02ef008afc'
+        schema:
+          type: 'string'
+          example: '62a68e04f76e5e02ef008afc'
+      - name: name
+        in: body
+        description: Role name
+        required: true
+        example: 'Guest'
+        schema:
+          type: 'string'
+          example: 'Guest'
+    responses:
+      '200':
+        description: 'Success'
+        schema:
+          $ref: '#/definitions/Role'
+      '404':
+        description: 'Unexpected error || Error, the user is not authorized'
+
+      '500':
+        description: 'SERVER ERROR'
+
+  delete:
+    tags:
+      - 'Role'
+    summary: 'Deletes a existing role'
+    description: 'Changes the status of an existing role from active to inactive'
+    produces:
+      - 'application/json'
+    parameters:
+      - name: id
+        in: path
+        description: Role id
+        required: true
+        example: '62a68e04f76e5e02ef008afc'
+        schema:
+          type: 'string'
+          example: '62a68e04f76e5e02ef008afc'
+    responses:
+      '200':
+        description: 'Success'
+        schema:
+          $ref: '#/definitions/Role'
+      '404':
+        description: 'Unexpected error || Error, the user is not authorized'
+
+      '500':
+        description: 'SERVER ERROR'

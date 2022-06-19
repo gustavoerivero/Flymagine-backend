@@ -1,21 +1,18 @@
 const express = require('express')
 const cors = require('cors')
 const morgan = require('morgan')
-const docs = require('./doc')
+
+const swaggerDocs = require('./services/swagger')
 const routes = require('./routes')
 const auth = require('./config/auth')
 
 require('dotenv').config()
-
 require('./db/db')
 
 // Swagger
 const swaggerUi = require('swagger-ui-express')
 
 // Settings
-const url = '/flymagine'
-const api = '/api/v1'
-const url_api = url + api
 const port = process.env.PORT || 3000
 const app = express()
 
@@ -29,18 +26,19 @@ app.use((err, req, res, next) => {
   auth.errorHandler(err, req, res, next)
 })
 
-app.use('/flymagine/public/images', express.static(__dirname + '/public/images'))
-app.use('/flymagine/public/docs', express.static(__dirname + '/public/docs'))
+app.use(`${process.env.URL}/public/images`, express.static(__dirname + '/public/images'))
+app.use(`${process.env.URL}/public/docs`, express.static(__dirname + '/public/docs'))
 
 app.use(cors())
-app.use('/flymagine/api/doc', swaggerUi.serve, swaggerUi.setup(docs))
+app.use(`${process.env.API_DOC}`, swaggerUi.serve, swaggerUi.setup(swaggerDocs))
 
 // Routes
-app.use(url_api, routes)
+app.use(`${process.env.URL}${process.env.API_URL}`, routes)
 
-app.get('/flymagine', (req, res) => res.send('Connected!'))
-app.get('/flymagine/api/v1', (req, res) => res.send(`Connected on Flymagine API ${process.env.API_VER} version!`))
-
+// Start server
+app.get(process.env.URL, (req, res) => res.send('Connected!'))
+app.get(`${process.env.URL}${process.env.API_URL}`, (req, res) =>
+  res.send(`Connected on Flymagine API ${process.env.API_VER} version!`))
 app.listen(port, () => {
   console.log(`Server is running on ${process.env.URL}`)
 })
