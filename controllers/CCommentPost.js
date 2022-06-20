@@ -76,6 +76,38 @@ const updateCommentPost = async (req, res) => {
   }
 }
 
+const uploadImage = async (req, res) => {
+  try {
+    const commentPost = await mCommentPost.findOne({ _id: req.params.id, status: 'A' })
+
+    if (!commentPost) {
+      return resp.makeResponsesError(res, "CPNotFound")
+    }
+
+    const file = req?.file
+    if (!file) {
+      return resp.makeResponsesError(res, "UImageError")
+    }
+
+    const filename = file?.filename
+    const basePath = `${req.protocol}://${req.get('host')}/flymagine/public/images/`
+
+    const saveCommentPost = await mCommentPost.findOneAndUpdate({
+      _id: req.params.id,
+      status: 'A'
+    }, {
+      $set: {
+        photo: `${basePath}${filename}`
+      }
+    })
+
+    resp.makeResponsesOkData(res, saveCommentPost, "CPUpdated")
+
+  } catch (error) {
+    resp.makeResponsesError(res, error)
+  }
+}
+
 const deleteCommentPost = async (req, res) => {
   try {
 
@@ -106,5 +138,6 @@ module.exports = {
   getCommentPostById,
   getCommentPostByUser,
   updateCommentPost,
+  uploadImage,
   deleteCommentPost,
 }

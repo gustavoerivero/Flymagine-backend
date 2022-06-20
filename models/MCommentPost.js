@@ -17,6 +17,12 @@ const commentPostSchema = new Schema({
     required: true,
     maxlength: 255
   },
+  photo: {
+    type: String,
+    required: true,
+    maxlength: 1024,
+    default: 'none',
+  },
   usersLiked: [{
     type: Schema.Types.ObjectId,
     ref: 'MUser'
