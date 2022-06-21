@@ -12,11 +12,6 @@ const notificationSchema = Schema({
     required: true,
     maxlength: 1024,
   },
-  link: {
-    type: String,
-    required: true,
-    maxlength: 1024,
-  },
   type: {
     type: String,
     required: true,

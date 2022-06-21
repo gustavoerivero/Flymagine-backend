@@ -20,8 +20,9 @@ const createPost = async (req, res) => {
     })
 
     const savePost = await post.save()
+    const postPopulate = await mPost.findOne({ _id: savePost._id })
 
-    resp.makeResponsesOkData(res, savePost, "PCreated")
+    resp.makeResponsesOkData(res, postPopulate, "PCreated")
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -35,6 +36,7 @@ const getAllPosts = async (req, res) => {
       status: 'A'
     })
       .sort({ createdAt: -1 })
+      .populate({ path: 'user' })
 
     resp.makeResponsesOkData(res, posts, "PGetAll")
 
@@ -51,6 +53,7 @@ const getPostByUser = async (req, res) => {
       status: 'A'
     })
       .sort({ createdAt: -1 })
+      .populate({ path: 'user' })
 
     resp.makeResponsesOkData(res, post, "PGetByUser")
 
@@ -67,6 +70,7 @@ const getPostById = async (req, res) => {
       status: 'A'
     })
       .sort({ createdAt: -1 })
+      .populate({ path: 'user' })
 
     resp.makeResponsesOkData(res, post, "PGetById")
 
@@ -84,6 +88,7 @@ const getFeedPosts = async (req, res) => {
     status: 'A'
   })
     .sort({ createdAt: -1 })
+    .populate({ path: 'user' })
 
   resp.makeResponsesOkData(res, posts, "PGetPosts")
 

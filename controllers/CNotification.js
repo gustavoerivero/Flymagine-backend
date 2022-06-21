@@ -8,7 +8,6 @@ const createNotification = async (req, res) => {
     const notification = new mNotification({
       user: value.user,
       description: value.description,
-      link: value.link,
       type: value.type,
     })
 

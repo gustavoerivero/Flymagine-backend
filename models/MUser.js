@@ -58,6 +58,14 @@ const userSchema = Schema({
     required: false,
     maxlength: 1024,
   },
+  tokens: [{
+    token: {
+      type: String,
+      maxlength: 1024,
+      unique: true,
+      required: false
+    },
+  }],
   status: {
     type: String,
     required: true,

@@ -12,8 +12,11 @@ const createCommentPost = async (req, res) => {
     })
 
     const saveCommentPost = await commentPost.save()
+    const commentPostPopulated = await mCommentPost.findOne({ _id: saveCommentPost._id })
+      .populate({ path: 'user' })
+      .populate({ path: 'post' })
 
-    resp.makeResponsesOkData(res, saveCommentPost, "CPCreated")
+    resp.makeResponsesOkData(res, commentPostPopulated, "CPCreated")
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -22,7 +25,8 @@ const createCommentPost = async (req, res) => {
 
 const getAllCommentPost = async (req, res) => {
   try {
-    const commentPosts = await mCommentPost.find({ status: 'A'})
+    const commentPosts = await mCommentPost.find({ status: 'A' })
+      .populate({ path: 'user' })
     resp.makeResponsesOkData(res, commentPosts, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -32,6 +36,7 @@ const getAllCommentPost = async (req, res) => {
 const getCommentPostByPost = async (req, res) => {
   try {
     const commentPost = await mCommentPost.find({ post: req.params.id, status: 'A' })
+      .populate({ path: 'user' })
     resp.makeResponsesOkData(res, commentPost, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -41,6 +46,7 @@ const getCommentPostByPost = async (req, res) => {
 const getCommentPostById = async (req, res) => {
   try {
     const commentPost = await mCommentPost.findOne({ _id: req.params.id, status: 'A' })
+      .populate({ path: 'user' })
     resp.makeResponsesOkData(res, commentPost, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -50,6 +56,7 @@ const getCommentPostById = async (req, res) => {
 const getCommentPostByUser = async (req, res) => {
   try {
     const commentPost = await mCommentPost.find({ user: req.params.id, status: 'A' })
+      .populate({ path: 'user' })
     resp.makeResponsesOkData(res, commentPost, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -101,7 +108,11 @@ const uploadImage = async (req, res) => {
       }
     })
 
-    resp.makeResponsesOkData(res, saveCommentPost, "CPUpdated")
+    const commentPostPopulated = await mCommentPost.findOne({ _id: saveCommentPost._id })
+      .populate({ path: 'user' })
+      .populate({ path: 'post' })
+
+    resp.makeResponsesOkData(res, commentPostPopulated, "CPUpdated")
 
   } catch (error) {
     resp.makeResponsesError(res, error)

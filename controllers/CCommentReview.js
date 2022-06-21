@@ -8,13 +8,16 @@ const createCommentReview = async (req, res) => {
     const commentReview = new mCommentReview({
       user: value.user,
       review: value.review,
-      description: value.description,      
+      description: value.description,
       usersLiked: [],
     })
 
     const saveCommentReview = await commentReview.save()
+    const commentReviewPopulated = await mCommentReview.findOne({ _id: saveCommentReview._id })
+      .populate({ path: 'user' })
+      .populate({ path: 'review' })
 
-    resp.makeResponsesOkData(res, saveCommentReview, "CRCreated")
+    resp.makeResponsesOkData(res, commentReviewPopulated, "CRCreated")
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -25,6 +28,7 @@ const getCommentReview = async (req, res) => {
   try {
 
     const commentReview = await mCommentReview.findOne({ _id: req.params.id, status: 'A' })
+      .populate({ path: 'user' })
 
     resp.makeResponsesOkData(res, commentReview, "CRGet")
 
@@ -36,6 +40,7 @@ const getCommentReview = async (req, res) => {
 const getCommentReviews = async (req, res) => {
   try {
     const commentReviews = await mCommentReview.find({ status: 'A' })
+      .populate({ path: 'user' })
 
     resp.makeResponsesOkData(res, commentReviews, "CRGetAll")
 
@@ -48,6 +53,7 @@ const getCommentReviewsByReview = async (req, res) => {
   try {
 
     const commentReviews = await mCommentReview.find({ review: req.params.id, status: 'A' })
+      .populate({ path: 'user' })
 
     resp.makeResponsesOkData(res, commentReviews, "CRGetAllByReview")
 
@@ -60,6 +66,7 @@ const getCommentReviewsByUser = async (req, res) => {
   try {
 
     const commentReviews = await mCommentReview.find({ user: req.params.id, status: 'A' })
+      .populate({ path: 'user' })
 
     resp.makeResponsesOkData(res, commentReviews, "CGetAllByUser")
 

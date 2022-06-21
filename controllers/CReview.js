@@ -16,8 +16,11 @@ const createReview = async (req, res) => {
     })
 
     const saveReview = await review.save()
+    const reviewPopulate = await mReview.findOne({ _id: saveReview._id })
+      .populate({ path: 'user' })
+      .populate({ path: 'book' })
 
-    resp.makeResponsesOkData(res, saveReview, "RVCreated")
+    resp.makeResponsesOkData(res, reviewPopulate, "RVCreated")
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -29,6 +32,8 @@ const getAllReviews = async (req, res) => {
 
     const reviews = await mReview.find({ status: 'A' })
       .sort({ createdAt: -1 })
+      .populate({ path: 'user' })
+      .populate({ path: 'book' })
 
     resp.makeResponsesOkData(res, reviews, "RVGetAll")
 
@@ -41,6 +46,8 @@ const getReviewById = async (req, res) => {
   try {
 
     const review = await mReview.findOne({ _id: req.params.id, status: 'A' })
+    .populate({ path: 'user' })
+    .populate({ path: 'book' })
 
     resp.makeResponsesOkData(res, review, "RVGetById")
 
@@ -54,6 +61,7 @@ const getReviewByBook = async (req, res) => {
 
     const review = await mReview.find({ book: req.params.id, status: 'A' })      
       .populate({ path: 'user' })
+      .populate({ path: 'book' })
       .sort({ createdAt: -1 })
 
     resp.makeResponsesOkData(res, review, "RVGetByBook")
@@ -68,6 +76,7 @@ const getReviewByUser = async (req, res) => {
 
     const review = await mReview.find({ user: req.params.id, status: 'A' })
       .populate({ path: 'book' })
+      .populate({ path: 'user' })
       .sort({ createdAt: -1 })
 
     resp.makeResponsesOkData(res, review, "RVGetByUser")
