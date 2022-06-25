@@ -36,7 +36,7 @@ const createUser = async (req, res) => {
 
     if (_User) {
 
-      resp.makeResponsesError(res, 'UFound')
+      resp.makeResponsesError(res, `User don't exist`, 'UFound')
 
     } else if (await mUser.findOne({
       email: value.email,
@@ -74,7 +74,7 @@ const createUser = async (req, res) => {
     }
 
   } catch (error) {
-    resp.makeResponsesException(res, error)
+    resp.makeResponsesError(res, error, 'UnexpectedError')
   }
 }
 
@@ -86,13 +86,13 @@ const login = async (req, res) => {
     })
 
     if (!valUser) {
-      return resp.makeResponsesError(res, 'ULoginError1')
+      return resp.makeResponsesError(res, 'Incorrect credentials', 'ULoginError1')
     }
 
     const valPass = await validate.comparePassword(req.body.password, valUser.password)
 
     if (!valPass) {
-      return resp.makeResponsesError(res, 'ULoginError2')
+      return resp.makeResponsesError(res, 'Incorrect credentials', 'ULoginError2')
     }
 
     const secret = process.env.SECRET_KEY
@@ -107,7 +107,7 @@ const login = async (req, res) => {
     resp.makeResponsesOkData(res, user, 'Success')
 
   } catch (error) {
-    resp.makeResponsesException(res, error)
+    resp.makeResponsesError(res, error, 'UnexpectedError')
   }
 }
 
@@ -117,7 +117,7 @@ const getAllUsers = async (req, res) => {
       .sort({ createdAt: -1 })
     resp.makeResponsesOkData(res, users, 'Success')
   } catch (error) {
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesError(res, error, 'UnexpectedError')
   }
 }
 
@@ -127,7 +127,7 @@ const getUser = async (req, res) => {
       .populate({ path: 'role', select: 'name' })
     resp.makeResponsesOkData(res, user, 'Success')
   } catch (error) {
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesError(res, error, 'UnexpectedError')
   }
 }
 
@@ -141,7 +141,7 @@ const getOnlyUser = async (req, res) => {
 
     resp.makeResponsesOkData(res, user, 'Success')
   } catch (error) {
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesError(res, error, 'UnexpectedError')
   }
 }
 
@@ -160,7 +160,7 @@ const getFilterUsers = async (req, res) => {
 
     resp.makeResponsesOkData(res, users, 'Success')
   } catch (error) {
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesError(res, error, 'UnexpectedError')
   }
 }
 
@@ -177,7 +177,7 @@ const getFilterUsersNoLimits = async (req, res) => {
       .sort({ createdAt: -1 })
     resp.makeResponsesOkData(res, users, 'Success')
   } catch (error) {
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesError(res, error, 'UnexpectedError')
   }
 }
 
@@ -185,12 +185,12 @@ const uploadProfileImage = async (req, res) => {
   try {
 
     if (!await mUser.findOne({ _id: req.params.id, status: 'A' })) {
-      return resp.makeResponsesError(res, 'UNotFound')
+      return resp.makeResponsesError(res, `User don't exist`,'UNotFound')
     }
 
     const file = req?.file
     if (!file) {
-      return resp.makeResponsesError(res, 'UImageError')
+      return resp.makeResponsesError(res, 'Unexpected error', 'UImageError')
     }
 
     const filename = file?.filename
@@ -208,7 +208,7 @@ const uploadProfileImage = async (req, res) => {
     resp.makeResponsesOkData(res, saveUser, 'UUpdated')
 
   } catch (error) {
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesError(res, error, 'UnexpectedError')
   }
 }
 
@@ -217,7 +217,7 @@ const updateUser = async (req, res) => {
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
 
     if (!user) {
-      return resp.makeResponsesError(res, 'UNotFound')
+      return resp.makeResponsesError(res, `User don't exist`, 'UNotFound')
     } else {
 
       let firstName = req.body.firstName ? req.body.firstName : user.firstName
@@ -240,7 +240,7 @@ const updateUser = async (req, res) => {
     }
 
   } catch (error) {
-    resp.makeResponsesException(res, error)
+    resp.makeResponsesException(res, error, 'UnexpectedError')
   }
 }
 
@@ -254,19 +254,19 @@ const changePassword = async (req, res) => {
     })
 
     if (!valUser) {
-      return resp.makeResponsesError(res, 'UNotFound')
+      return resp.makeResponsesError(res, `User don't exist`, 'UNotFound')
     }
 
     const valPass = await validate.comparePassword(req.body.password, valUser.password)
 
     if (!valPass) {
-      return resp.makeResponsesError(res, 'UChangePasswordError')
+      return resp.makeResponsesError(res, 'Incorrect credentials', 'UChangePasswordError')
     }
 
     const valNewPass = await validate.comparePassword(req.body.newPassword, valUser.password)
 
     if (valNewPass) {
-      return resp.makeResponsesError(res, 'UChangePasswordError1')
+      return resp.makeResponsesError(res, 'Incorrect credentials', 'UChangePasswordError1')
     }
 
     const saveUser = await mUser.findOneAndUpdate({
@@ -281,7 +281,7 @@ const changePassword = async (req, res) => {
     resp.makeResponsesOkData(res, saveUser, 'UChangePasswordSuccess')
 
   } catch (error) {
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesError(res, error, 'UnexpectedError')
   }
 }
 
@@ -290,7 +290,7 @@ const deleteUser = async (req, res) => {
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
 
     if (!user) {
-      return resp.makeResponsesError(res, 'UNotFound')
+      return resp.makeResponsesError(res, `User don't exist`, 'UNotFound')
     }
 
     const saveUser = await user.updateOne({
@@ -305,7 +305,7 @@ const deleteUser = async (req, res) => {
     resp.makeResponsesOkData(res, saveUser, 'UDeleted')
 
   } catch (error) {
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesError(res, error, 'UnexpectedError')
   }
 }
 
@@ -316,7 +316,7 @@ const restoredPassword = async (req, res) => {
     const user = await mUser.findOne({ email: email, status: 'A' })
 
     if (!user) {
-      return resp.makeResponsesError(res, 'UNotFound')
+      return resp.makeResponsesError(res, `User don't exist`, 'UNotFound')
     }
 
     let newPassword = generator.generate({
@@ -340,7 +340,7 @@ const restoredPassword = async (req, res) => {
     resp.makeResponsesOkData(res, updateUser, 'UChangePasswordSuccess')
 
   } catch (error) {
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesError(res, error, 'UnexpectedError')
   }
 }
 /**
@@ -354,7 +354,7 @@ const setFollowUser = async (req, res) => {
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
 
     if (!user) {
-      return resp.makeResponsesError(res, 'UNotFound')
+      return resp.makeResponsesError(res, `User don't exist`, 'UNotFound')
     } else if (await mFollows.findOne({ user: req.params.id })) {
 
       const updateFollows = await mFollows.findOneAndUpdate({
@@ -380,7 +380,7 @@ const setFollowUser = async (req, res) => {
     }
 
   } catch (error) {
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesError(res, error, 'UnexpectedError')
   }
 }
 
@@ -390,7 +390,7 @@ const getFollows = async (req, res) => {
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
 
     if (!user) {
-      return resp.makeResponsesError(res, 'UNotFound')
+      return resp.makeResponsesError(res, `User don't exist`, 'UNotFound')
     } else if (!await mFollows.findOne({ user: req.params.id })) {
 
       const follows = await mFollows.create({
@@ -414,7 +414,7 @@ const getFollows = async (req, res) => {
     }
 
   } catch (error) {
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesError(res, error, 'UnexpectedError')
   }
 }
 
@@ -432,7 +432,7 @@ const getFollowers = async (req, res) => {
     resp.makeResponsesOkData(res, followers, 'Success')
 
   } catch (error) {
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesError(res, error, 'UnexpectedError')
   }
 }
 
@@ -446,7 +446,7 @@ const setUserBookFav = async (req, res) => {
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
 
     if (!user) {
-      return resp.makeResponsesError(res, 'UNotFound')
+      return resp.makeResponsesError(res, `User don't exist`, 'UNotFound')
     } else if (await mUserBookFav.findOne({ user: req.params.id })) {
       const updateBookFav = await mUserBookFav.findOneAndUpdate({ user: req.params.id }, {
         $set: {
@@ -467,7 +467,7 @@ const setUserBookFav = async (req, res) => {
     }
 
   } catch (error) {
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesError(res, error, 'UnexpectedError')
   }
 }
 const setUserBookToRead = async (req, res) => {
@@ -476,7 +476,7 @@ const setUserBookToRead = async (req, res) => {
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
 
     if (!user) {
-      return resp.makeResponsesError(res, 'UNotFound')
+      return resp.makeResponsesError(res, `User don't exist`, 'UNotFound')
     } else if (await mUserBookToRead.findOne({ user: req.params.id })) {
       const updateBookToRead = await mUserBookToRead.findOneAndUpdate({ user: req.params.id }, {
         $set: {
@@ -497,7 +497,7 @@ const setUserBookToRead = async (req, res) => {
     }
 
   } catch (error) {
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesError(res, error, 'UnexpectedError')
   }
 }
 
@@ -507,7 +507,7 @@ const setUserBookReading = async (req, res) => {
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
 
     if (!user) {
-      return resp.makeResponsesError(res, 'UNotFound')
+      return resp.makeResponsesError(res, `User don't exist`, 'UNotFound')
     } else if (await mUserBookReading.findOne({ user: req.params.id })) {
       const updateBookReading = await mUserBookReading.findOneAndUpdate({ user: req.params.id }, {
         $set: {
@@ -528,7 +528,7 @@ const setUserBookReading = async (req, res) => {
     }
 
   } catch (error) {
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesError(res, error, 'UnexpectedError')
   }
 }
 
@@ -538,7 +538,7 @@ const setUserBookRead = async (req, res) => {
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
 
     if (!user) {
-      return resp.makeResponsesError(res, 'UNotFound')
+      return resp.makeResponsesError(res, `User don't exist`, 'UNotFound')
     } else if (await mUserBookRead.findOne({ user: req.params.id })) {
       const updateBookRead = await mUserBookRead.findOneAndUpdate({ user: req.params.id }, {
         $set: {
@@ -559,7 +559,7 @@ const setUserBookRead = async (req, res) => {
     }
 
   } catch (error) {
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesError(res, error, 'UnexpectedError')
   }
 }
 
@@ -571,7 +571,7 @@ const getBooksFavByUser = async (req, res) => {
       .sort({ createdAt: -1 })
     resp.makeResponsesOkData(res, reactions, 'Success')
   } catch (error) {
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesError(res, error, 'UnexpectedError')
   }
 }
 
@@ -583,7 +583,7 @@ const getBooksToReadByUser = async (req, res) => {
       .sort({ createdAt: -1 })
     resp.makeResponsesOkData(res, reactions, 'Success')
   } catch (error) {
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesError(res, error, 'UnexpectedError')
   }
 }
 
@@ -595,7 +595,7 @@ const getBooksReadingByUser = async (req, res) => {
       .sort({ createdAt: -1 })
     resp.makeResponsesOkData(res, reactions, 'Success')
   } catch (error) {
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesError(res, error, 'UnexpectedError')
   }
 }
 
@@ -607,7 +607,7 @@ const getBooksReadByUser = async (req, res) => {
       .sort({ createdAt: -1 })
     resp.makeResponsesOkData(res, reactions, 'Success')
   } catch (error) {
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesError(res, error, 'UnexpectedError')
   }
 }
 
@@ -622,7 +622,7 @@ const setPersonalPreference = async (req, res) => {
     const user = await mUser.findOne({ _id: req.body.id, status: 'A' })
 
     if (!user) {
-      return resp.makeResponsesError(res, 'UNotFound')
+      return resp.makeResponsesError(res, `User don't exist`, 'UNotFound')
     }
     else if (await mPersonalPreference.findOne({ user: req.body.id })) {
       const personalPreference = await mPersonalPreference.updateOne({ user: req.body.id }, {
@@ -645,7 +645,7 @@ const setPersonalPreference = async (req, res) => {
     }
 
   } catch (error) {
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesError(res, error, 'UnexpectedError')
   }
 }
 
@@ -658,7 +658,7 @@ const getPersonalPreference = async (req, res) => {
     resp.makeResponsesOkData(res, user, 'PPreferenceGet')
 
   } catch (error) {
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesError(res, error, 'UnexpectedError')
   }
 }
 
@@ -671,7 +671,7 @@ const getUserByPersonalPreference = async (req, res) => {
     resp.makeResponsesOkData(res, genre, 'UGetByPersonalPreference')
 
   } catch (error) {
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesError(res, error, 'UnexpectedError')
   }
 }
 
@@ -682,7 +682,7 @@ const deleteAllPersonalPreference = async (req, res) => {
     const user = await mUser.findOne({ _id: req.params.id, status: 'A' })
 
     if (!user) {
-      return resp.makeResponsesError(res, 'UNotFound')
+      return resp.makeResponsesError(res, `User don't exist`, 'UNotFound')
     } else {
       const personalPreference = await mPersonalPreference.findOneAndUpdate({ user: req.params.id }, {
         $set: {
@@ -695,7 +695,7 @@ const deleteAllPersonalPreference = async (req, res) => {
     }
 
   } catch (error) {
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesError(res, error, 'UnexpectedError')
   }
 }
 

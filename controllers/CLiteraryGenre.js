@@ -6,7 +6,7 @@ const createLiteraryGenre = async (req, res) => {
     const value = req.body
 
     if (await mLiteraryGenre.findOne({ name: value.name, status: 'A' })) {
-      resp.makeResponsesError(res, "LGFound")
+      resp.makeResponsesError(res, `Literary genre don't exist`, "LGFound")
     } else if (await mLiteraryGenre.findOne({ name: value.name, status: 'I' })) {
       const saveLiteraryGenre = await mLiteraryGenre.findOneAndUpdate({ name: value.name }, {
         $set: {
@@ -26,7 +26,7 @@ const createLiteraryGenre = async (req, res) => {
     }
 
   } catch (error) {
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesError(res, error, 'UnexpectedError')
   }
 }
 
@@ -38,7 +38,7 @@ const getAllLiteraryGenres = async (req, res) => {
     resp.makeResponsesOkData(res, literaryGenres, "LGGetAll")
 
   } catch (error) {
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesError(res, error, 'UnexpectedError')
   }
 }
 
@@ -50,7 +50,7 @@ const getLiteraryGenreById = async (req, res) => {
     resp.makeResponsesOkData(res, literaryGenre, "LGGetById")
 
   } catch (error) {
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesError(res, error, 'LGNotFound')
   }
 }
 
@@ -60,7 +60,7 @@ const updateLiteraryGenre = async (req, res) => {
     const literaryGenre = await mLiteraryGenre.findOne({ _id: req.params.id, status: 'A' })
 
     if (!literaryGenre) {
-      return resp.makeResponsesError(res, "LGNotFound")
+      return resp.makeResponsesError(res, `Literary genre don't exist`, "LGNotFound")
     }
 
     const saveLiteraryGenre = await mLiteraryGenre.findOneAndUpdate({ _id: req.params.id, status: 'A' }, {
@@ -72,7 +72,7 @@ const updateLiteraryGenre = async (req, res) => {
     resp.makeResponsesOkData(res, saveLiteraryGenre, "LGUpdated")
 
   } catch (error) {
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesError(res, error, 'UnexpectedError')
   }
 }
 
@@ -82,7 +82,7 @@ const deleteLiteraryGenre = async (req, res) => {
     const literaryGenre = await mLiteraryGenre.findById(req.params.id)
 
     if (!literaryGenre) {
-      return resp.makeResponsesError(res, "LGNotFound")
+      return resp.makeResponsesError(res, `Literary genre don't exist`, "LGNotFound")
     }
 
     const saveLiteraryGenre = await mLiteraryGenre.findOneAndUpdate({ _id: req.params.id }, {
@@ -95,7 +95,7 @@ const deleteLiteraryGenre = async (req, res) => {
     resp.makeResponsesOkData(res, saveLiteraryGenre, "LGDeleted")
 
   } catch (error) {
-    resp.makeResponsesError(res, error)
+    resp.makeResponsesError(res, error, 'UnexpectedError')
   }
 }
 

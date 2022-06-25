@@ -1,9 +1,10 @@
 const message = require('./messages.json')
 
-function makeResponsesError(res, code) {
+function makeResponsesError(res, error, code) {
   const msg = {
     OK: 0,
-    Message: message[[code]]
+    Error: error,
+    Message: message[[code || 'UnexpectedError']]
   }
   res.status(404).json(msg)
 }

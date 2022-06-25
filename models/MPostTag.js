@@ -6,12 +6,12 @@ const postTagSchema = new Schema({
   hashtags: [{
     type: Schema.Types.ObjectId,
     ref: 'MHashtag',
-    required: true,
+    required: [true, 'Hashtag ids are required'],
   }],
   post: {
     type: Schema.Types.ObjectId,
     ref: 'MPost',
-    required: true,
+    required: [true, 'Post id is required'],
   },
 }, { timestamps: true })
 

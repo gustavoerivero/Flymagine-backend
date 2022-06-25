@@ -8,7 +8,7 @@
     "UVoid": "Error, not data",
     "ULogin": "Login success",
     "ULoginError1": "Error, the user don't exits",
-    "UloginError2": "Error, incorrect password",
+    "ULoginError2": "Error, incorrect password",
     "ULoginError3": "Error, the user is not authorized",
     "ULoginError4": "Error, the user is not active",
     "UChangePasswordError": "Error, incorrect password",

@@ -6,12 +6,12 @@ const userTagSchema = new Schema({
   users: [{
     type: Schema.Types.ObjectId,
     ref: 'MUser',
-    required: true,
+    required: [true, 'User ids are required'],
   }],
   post: {
     type: Schema.Types.ObjectId,
     ref: 'MPost',
-    required: true,
+    required: [true, 'Post id is required'],
   },
 }, { timestamps: true })
 

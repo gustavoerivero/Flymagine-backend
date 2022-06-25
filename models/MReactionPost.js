@@ -1,18 +1,20 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
+const mongoosePaginate = require('mongoose-paginate-v2')
 
 const reactionPostSchema = new Schema({  
   post: {
     type: Schema.Types.ObjectId,
     ref: 'MPost',
-    required: ['Es necesario que ingrese el id de post'],
-    unique: true
+    required: [true, 'Post id is required'],
+    unique: [true, 'Post id must be unique'],
   },
   users: [{
     type: Schema.Types.ObjectId,
     ref: 'MUser',
-    required: ['Es necesario que ingrese el id de usuario'],
+    required: [true, 'User ids is required'],
   }]
 }, { timestamps: true })
 
+reactionPostSchema.plugin(mongoosePaginate)
 module.exports = mongoose.model('MReactionPost', reactionPostSchema)

@@ -1,12 +1,14 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
+const mongoosePaginate = require('mongoose-paginate-v2')
 
 const literaryGenreSchema = new Schema({
   name: {
     type: String,
-    required: true,
-    unique: true,
-    maxlength: 255,
+    required: [true, 'Name is required'],
+    unique: [true, 'Name is unique'],
+    minlength: [1, 'Name must be at least 1 character'],
+    maxlength: [255, 'Name must be less than 255 characters'],
   },
   deletedAt: {
     type: Date,
@@ -15,11 +17,16 @@ const literaryGenreSchema = new Schema({
   },
   status: {
     type: String,
-    required: true,
-    maxlength: 1,
-    enum: ['A', 'I'], // A = Active, I = Inactive
+    required: [true, 'Status is required'],
+    minlength: [1, 'Status must be at least 1 character'],
+    maxlength: [1, 'Status must be at most 1 character'],
+    enum: {
+      values: ['A', 'I'], // A = Active, I = Inactive
+      message: '{VALUE} is not a valid status',
+    },
     default: 'A'
   },
 }, { timestamps: true })
 
+literaryGenreSchema.plugin(mongoosePaginate)
 module.exports = mongoose.model('MLiteraryGenre', literaryGenreSchema)

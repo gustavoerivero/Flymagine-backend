@@ -1,21 +1,23 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
+const mongoosePaginate = require('mongoose-paginate-v2')
 
 const commentReviewSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
     ref: 'MUser',
-    required: true,
+    required: [true, 'User id is required'],
   },
   review: {
     type: Schema.Types.ObjectId,
     ref: 'MReview',
-    required: true,
+    required: [true, 'Review id is required'],
   },
   description: {
     type: String,
-    required: true,
-    maxlength: 255,
+    required: [true, 'Description is required'],
+    minlength: [1, 'Description must be at least 1 character'],
+    maxlength: [1024, 'Description must be less than 1024 characters'],
   },
   usersLiked: [{
     type: Schema.Types.ObjectId,
@@ -23,9 +25,13 @@ const commentReviewSchema = new Schema({
   }],
   status: {
     type: String,
-    required: true,
-    maxlength: 1,
-    enum: ['A', 'I'], // A = Active, I = Inactive
+    required: [true, 'Status is required'],
+    minlength: [1, 'Status must be at least 1 character'],
+    maxlength: [1, 'Status must be at most 1 character'],
+    enum: {
+      values: ['A', 'I'], // A = Active, I = Inactive
+      message: '{VALUE} is not a valid status',
+    },
     default: 'A'
   },
   deletedAt: {
@@ -35,4 +41,5 @@ const commentReviewSchema = new Schema({
   },
 }, { timestamps: true })
 
+commentReviewSchema.plugin(mongoosePaginate)
 module.exports = mongoose.model('MCommentReview', commentReviewSchema)
