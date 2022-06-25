@@ -32,13 +32,16 @@ const createPost = async (req, res) => {
 const getAllPosts = async (req, res) => {
   try {
 
-    const posts = await mPost.find({
+    const postsPaginate = await mPost.paginate({
       status: 'A'
+    }, {
+      page: req.params.page,
+      limit: req.params.limit,
+      sort: { createdAt: -1 },
+      populate: { path: 'user' },
     })
-      .sort({ createdAt: -1 })
-      .populate({ path: 'user' })
 
-    resp.makeResponsesOkData(res, posts, "PGetAll")
+    resp.makeResponsesOkData(res, postsPaginate, "PGetAll")
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -48,12 +51,15 @@ const getAllPosts = async (req, res) => {
 const getPostByUser = async (req, res) => {
   try {
 
-    const post = await mPost.find({
+    const post = await mPost.paginate({
       user: req.params.id,
       status: 'A'
+    }, {
+      page: req.params.page,
+      limit: req.params.limit,
+      sort: { createdAt: -1 },
+      populate: { path: 'user' },
     })
-      .sort({ createdAt: -1 })
-      .populate({ path: 'user' })
 
     resp.makeResponsesOkData(res, post, "PGetByUser")
 
@@ -81,18 +87,21 @@ const getPostById = async (req, res) => {
 
 const getFeedPosts = async (req, res) => {
 
-  const posts = await mPost.find({
-    user: {
-      $in: req.body
-    },
-    status: 'A'
-  })
-    .sort({ createdAt: -1 })
-    .populate({ path: 'user' })
-
-  resp.makeResponsesOkData(res, posts, "PGetPosts")
-
   try {
+
+    const posts = await mPost.paginate({
+      user: {
+        $in: req.body
+      },
+      status: 'A'
+    }, {
+      page: req.params.page,
+      limit: req.params.limit,
+      sort: { createdAt: -1 },
+      populate: { path: 'user' },
+    })
+
+    resp.makeResponsesOkData(res, posts, "PGetPosts")
 
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -170,15 +179,22 @@ const deletePost = async (req, res) => {
 const getPostByHashtags = async (req, res) => {
   try {
 
-    const posts = await mPostTag.find({
+    const posts = await mPostTag.paginate({
       hashtags: {
         $in: req.body
       },
       status: 'A'
+    }, {
+      page: req.params.page,
+      limit: req.params.limit,
+      sort: { createdAt: -1 },
+      populate: { 
+        path: 'post', 
+        populate: { 
+          path: 'user' 
+        }
+      }
     })
-      .populate({ path: 'hashtags' })
-      .populate({ path: 'post' })
-      .sort({ createdAt: -1 })
 
     resp.makeResponsesOkData(res, posts, "PGetByHashtags")
 
@@ -273,9 +289,9 @@ const setHashtagTag = async (req, res) => {
 
 const getHashtagTagByPost = async (req, res) => {
   try {
-    const reactions = await mPostTag.find({ post: req.params.id })
+    const hashtags = await mPostTag.find({ post: req.params.id })
       .populate({ path: 'hashtags' })
-    resp.makeResponsesOkData(res, reactions, "Success")
+    resp.makeResponsesOkData(res, hashtags, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
   }

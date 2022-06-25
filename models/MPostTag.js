@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
+const mongoosePaginate = require('mongoose-paginate-v2')
 
 const postTagSchema = new Schema({
   hashtags: [{
@@ -14,4 +15,5 @@ const postTagSchema = new Schema({
   },
 }, { timestamps: true })
 
+postTagSchema.plugin(mongoosePaginate)
 module.exports = mongoose.model('MPostTag', postTagSchema)

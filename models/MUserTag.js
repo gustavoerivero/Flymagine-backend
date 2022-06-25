@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
+const mongoosePaginate = require('mongoose-paginate-v2')
 
 const userTagSchema = new Schema({
   users: [{
@@ -14,4 +15,5 @@ const userTagSchema = new Schema({
   },
 }, { timestamps: true })
 
+userTagSchema.plugin(mongoosePaginate)
 module.exports = mongoose.model('MUserTag', userTagSchema)

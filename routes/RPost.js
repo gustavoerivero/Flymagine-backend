@@ -3,15 +3,15 @@ const cPost = require('../controllers/CPost')
 const { imageUpload } = require('../utils/multer')
 
 router.post('/', cPost.createPost)
-router.get('/', cPost.getAllPosts)
+router.get('/page=:page&limit=:limit', cPost.getAllPosts)
 router.get('/:id', cPost.getPostById)
-router.get('/user/:id', cPost.getPostByUser)
-router.post('/feed', cPost.getFeedPosts)
+router.get('/user/:id/page=:page&limit=:limit', cPost.getPostByUser)
+router.post('/feed/page=:page&limit=:limit', cPost.getFeedPosts)
 router.post('/:id/image', imageUpload.single('photo'), cPost.uploadImage)
 router.put('/:id', cPost.updatePost)
 router.delete('/:id', cPost.deletePost)
 
-router.post('/hashtags', cPost.getPostByHashtags)
+router.post('/hashtags/page=:page&limit=:limit', cPost.getPostByHashtags)
 
 // Reaction to post actions
 router.post('/:id/reaction', cPost.setReactionPost)
