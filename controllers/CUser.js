@@ -113,8 +113,18 @@ const login = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
   try {
-    const users = await mUser.find({ status: 'A' })
-      .sort({ createdAt: -1 })
+
+    const users = await mUser.paginate({
+      status: 'A'
+    }, {
+      page: req.params.page,
+      limit: req.params.limit,
+      sort: { createdAt: -1 },
+      populate: {
+        path: 'role',
+      }
+    })
+
     resp.makeResponsesOkData(res, users, 'Success')
   } catch (error) {
     resp.makeResponsesError(res, error, 'UnexpectedError')
@@ -148,33 +158,25 @@ const getOnlyUser = async (req, res) => {
 const getFilterUsers = async (req, res) => {
   try {
 
-    const users = await mUser.find({
+    const users = await mUser.paginate({
       $or: [
-        { fullName: { $regex: req.params.search } },
+        {
+          fullName: {
+            $regex: req.params.search
+          }
+        },
       ],
       status: 'A'
+    }, {
+      page: req.params.page,
+      limit: req.params.limit,
+      sort: { createdAt: -1 },
+      populate: {
+        path: 'role',
+        select: 'name'
+      }
     })
-      .populate({ path: 'role', select: 'name' })
-      .limit(10)
-      .sort({ createdAt: -1 })
 
-    resp.makeResponsesOkData(res, users, 'Success')
-  } catch (error) {
-    resp.makeResponsesError(res, error, 'UnexpectedError')
-  }
-}
-
-const getFilterUsersNoLimits = async (req, res) => {
-  try {
-
-    const users = await mUser.find({
-      $or: [
-        { fullName: { $regex: req.params.search } },
-      ],
-      status: 'A'
-    })
-      .populate({ path: 'role', select: 'name' })
-      .sort({ createdAt: -1 })
     resp.makeResponsesOkData(res, users, 'Success')
   } catch (error) {
     resp.makeResponsesError(res, error, 'UnexpectedError')
@@ -185,7 +187,7 @@ const uploadProfileImage = async (req, res) => {
   try {
 
     if (!await mUser.findOne({ _id: req.params.id, status: 'A' })) {
-      return resp.makeResponsesError(res, `User don't exist`,'UNotFound')
+      return resp.makeResponsesError(res, `User don't exist`, 'UNotFound')
     }
 
     const file = req?.file
@@ -343,11 +345,11 @@ const restoredPassword = async (req, res) => {
     resp.makeResponsesError(res, error, 'UnexpectedError')
   }
 }
+
 /**
  * 
  * UserFollows actions
  */
-
 const setFollowUser = async (req, res) => {
   try {
 
@@ -420,6 +422,7 @@ const getFollows = async (req, res) => {
 
 const getFollowers = async (req, res) => {
   try {
+
     const followers = await mFollows.find({
       follows: req.params.id,
       user: {
@@ -565,11 +568,11 @@ const setUserBookRead = async (req, res) => {
 
 const getBooksFavByUser = async (req, res) => {
   try {
-    const reactions = await mUserBookFav.find({ user: req.params.id, status: 'A' })
+    const books = await mUserBookFav.find({ user: req.params.id, status: 'A' })
       .populate('booksFav')
       .populate('user')
       .sort({ createdAt: -1 })
-    resp.makeResponsesOkData(res, reactions, 'Success')
+    resp.makeResponsesOkData(res, books, 'Success')
   } catch (error) {
     resp.makeResponsesError(res, error, 'UnexpectedError')
   }
@@ -577,11 +580,11 @@ const getBooksFavByUser = async (req, res) => {
 
 const getBooksToReadByUser = async (req, res) => {
   try {
-    const reactions = await mUserBookToRead.find({ user: req.params.id, status: 'A' })
+    const books = await mUserBookToRead.find({ user: req.params.id, status: 'A' })
       .populate('booksToRead')
       .populate('user')
       .sort({ createdAt: -1 })
-    resp.makeResponsesOkData(res, reactions, 'Success')
+    resp.makeResponsesOkData(res, books, 'Success')
   } catch (error) {
     resp.makeResponsesError(res, error, 'UnexpectedError')
   }
@@ -589,11 +592,11 @@ const getBooksToReadByUser = async (req, res) => {
 
 const getBooksReadingByUser = async (req, res) => {
   try {
-    const reactions = await mUserBookReading.find({ user: req.params.id, status: 'A' })
+    const books = await mUserBookReading.find({ user: req.params.id, status: 'A' })
       .populate('booksReading')
       .populate('user')
       .sort({ createdAt: -1 })
-    resp.makeResponsesOkData(res, reactions, 'Success')
+    resp.makeResponsesOkData(res, books, 'Success')
   } catch (error) {
     resp.makeResponsesError(res, error, 'UnexpectedError')
   }
@@ -601,11 +604,11 @@ const getBooksReadingByUser = async (req, res) => {
 
 const getBooksReadByUser = async (req, res) => {
   try {
-    const reactions = await mUserBookRead.find({ user: req.params.id, status: 'A' })
+    const books = await mUserBookRead.find({ user: req.params.id, status: 'A' })
       .populate('booksRead')
       .populate('user')
       .sort({ createdAt: -1 })
-    resp.makeResponsesOkData(res, reactions, 'Success')
+    resp.makeResponsesOkData(res, books, 'Success')
   } catch (error) {
     resp.makeResponsesError(res, error, 'UnexpectedError')
   }
@@ -707,7 +710,6 @@ module.exports = {
   getUser,
   getOnlyUser,
   getFilterUsers,
-  getFilterUsersNoLimits,
   updateUser,
   changePassword,
   uploadProfileImage,

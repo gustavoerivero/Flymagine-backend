@@ -63,8 +63,16 @@ const createBook = async (req, res) => {
 const getAllBooks = async (req, res) => {
   try {
 
-    const books = await mBook.find({ status: 'A' })
-    .sort({ createdAt: -1 })
+    const books = await mBook.paginate({
+      status: 'A'
+    }, {
+      page: req.params.page,
+      limit: req.params.limit,
+      sort: { createdAt: -1 },
+      populate: {
+        path: 'user',
+      }
+    })
 
     resp.makeResponsesOkData(res, books, "BGetAll")
 
@@ -77,6 +85,7 @@ const getBookById = async (req, res) => {
   try {
 
     const book = await mBook.findOne({ _id: req.params.id, status: 'A' })
+      .populate({ path: 'user' })
 
     resp.makeResponsesOkData(res, book, "BGetById")
 
@@ -89,14 +98,24 @@ const getBookById = async (req, res) => {
 const getFilterBooks = async (req, res) => {
   try {
 
-    const books = await mBook.find({
+    const books = await mBook.paginate({
       $or: [
-        { name: { $regex: req.params.search } },
+        { 
+          name: { 
+            $regex: req.params.search 
+          } 
+        }
       ],
       status: 'A'
+    }, {
+      page: req.params.page,
+      limit: req.params.limit,
+      sort: { createdAt: -1 },
+      populate: {
+        path: 'user',
+      }
     })
-      .populate({ path: 'user', select: 'firstName lastName photo' })
-      .sort({ createdAt: -1 })
+
     resp.makeResponsesOkData(res, books, "Success")
   } catch (error) {
     resp.makeResponsesError(res, error)
@@ -209,11 +228,17 @@ const deleteBook = async (req, res) => {
 const getBooksByUser = async (req, res) => {
   try {
 
-    const books = await mBook.find({
+    const books = await mBook.paginate({
       user: req.params.id,
       status: 'A'
+    }, {
+      page: req.params.page,
+      limit: req.params.limit,
+      sort: { createdAt: -1 },
+      populate: {
+        path: 'user',
+      }
     })
-    .sort({ createdAt: -1 })
 
     resp.makeResponsesOkData(res, books, "BGetByUser")
 

@@ -4,10 +4,10 @@ const { imageUpload, docUpload } = require('../utils/multer')
 
 // Book actions routes
 router.post('/', cBook.createBook)
-router.get('/', cBook.getAllBooks)
+router.get('/page=:page&limit=:limit', cBook.getAllBooks)
 router.get('/:id', cBook.getBookById)
-router.get('/user/:id', cBook.getBooksByUser)
-router.get('/search/:search', cBook.getFilterBooks)
+router.get('/user=:id/page=:page&limit=:limit', cBook.getBooksByUser)
+router.get('/search=:search/page=:page&limit=:limit', cBook.getFilterBooks)
 router.put('/:id', cBook.updateBook)
 router.post('/:id/image', imageUpload.single('photo'), cBook.uploadImage)
 router.post('/:id/document', docUpload.single('document'), cBook.uploadDocument)
